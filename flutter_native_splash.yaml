@@ -1,0 +1,5 @@
+# for Splash Screen
+# flutter pub run flutter_native_splash:create flutter_native_splash.yaml
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/logoImage_.png
