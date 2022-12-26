@@ -67,9 +67,8 @@ flutter:
         - asset: assets/fonts/ChivoMono-VariableFont_wght.ttf
           weight: 300
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+     - assets/images/account_icon_image.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
