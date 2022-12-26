@@ -92,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
         width: MediaQuery.of(context).size.width,
         child: ListView(children: <Widget>[
           const Padding(padding: EdgeInsets.all(8)),
-          const SizedBox(height: 30.0),
+          const SizedBox(height: 40.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -112,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   width: 75,
                   height: 75,
                   decoration: BoxDecoration(
-                    border: Border.all(width: 1.2, color: Colors.black),
+                    border: Border.all(width: 1.5, color: Colors.black),
                     shape: BoxShape.circle,
                     image: DecorationImage(
                         image:
@@ -131,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
           const SizedBox(height: 40.0),
           const Divider(
               height: 20,
-              thickness: 1,
+              thickness: 1.5,
               indent: 10,
               endIndent: 50,
               color: Color(0xffFCD2D2)),
@@ -140,35 +140,35 @@ class _MyHomePageState extends State<MyHomePage> {
               Icons.document_scanner,
               color: Colors.black,
             ),
-            title: Text('나의 템플릿 관리', style: TextStyle(fontSize: 18)),
+            title: Text('나의 템플릿 관리', style: TextStyle(fontSize: 16)),
             onTap: null,
           ),
           const Divider(
               height: 20,
-              thickness: 1,
+              thickness: 1.5,
               indent: 10,
               endIndent: 50,
               color: Color(0xffFCD2D2)),
           const ListTile(
             leading: Icon(
-              Icons.store,
+              Icons.storefront,
               color: Colors.black,
             ),
-            title: Text('템플릿 스토어', style: TextStyle(fontSize: 18)),
+            title: Text('템플릿 스토어', style: TextStyle(fontSize: 16)),
             onTap: null,
           ),
           const Divider(
               height: 20,
-              thickness: 1,
+              thickness: 1.5,
               indent: 10,
               endIndent: 50,
               color: Color(0xffFCD2D2)),
           const ListTile(
             leading: Icon(
-              Icons.play_lesson_outlined,
+              Icons.play_lesson_rounded,
               color: Colors.black,
             ),
-            title: Text('튜토리얼 보기', style: TextStyle(fontSize: 18)),
+            title: Text('튜토리얼 다시보기', style: TextStyle(fontSize: 16)),
             onTap: null,
           ),
         ]),
