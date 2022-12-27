@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:diory_project/write_text_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -58,6 +59,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final _items = <Widget>[];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,24 +119,28 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       // ------------------------------------------------------
 
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            TextField(
-              style: TextStyle(fontSize: 30.0),
-              decoration: InputDecoration(
-                // font 변경방법?
-
-                labelText: '제목을 입력하세요',
-                isDense: true,
-              ),
-              minLines: 60,
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
+      body: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const <Widget>[
+                TextField(
+                  style: TextStyle(fontSize: 30.0),
+                  decoration: InputDecoration(
+                    // font 변경방법?
+                    labelText: '제목을 입력하세요',
+                    isDense: true,
+                  ),
+                  minLines: 60,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          for (var item in _items) item
+        ],
       ),
 
       // ---------------------------------------------------------
@@ -144,16 +151,95 @@ class _MyHomePageState extends State<MyHomePage> {
         //animatedIcon: AnimatedIcons.menu_close, -> 기본아이콘이 햄버거로 정해져있음.
 
         children: [
-          SpeedDialChild(child: Icon(Icons.share_rounded), label: 'return'),
-          SpeedDialChild(child: Icon(Icons.mail), label: 'font change'),
-          SpeedDialChild(child: Icon(Icons.copy), label: 'text'),
-          SpeedDialChild(child: Icon(Icons.copy), label: 'sticker'),
-          SpeedDialChild(child: Icon(Icons.copy), label: 'gallery'),
+          SpeedDialChild(child: Icon(Icons.arrow_downward), label: 'return'),
+          SpeedDialChild(child: Icon(Icons.text_fields), label: 'font change'),
+          SpeedDialChild(
+            child: Icon(Icons.edit),
+            label: 'text',
+            onTap: () {
+              addText();
+            },
+          ),
+          SpeedDialChild(child: Icon(Icons.emoji_emotions), label: 'sticker'),
+          SpeedDialChild(
+              child: Icon(Icons.add_photo_alternate), label: 'gallery'),
+          SpeedDialChild(
+            child: Icon(Icons.delete),
+            label: 'delete',
+            onTap: () {
+              deleteText();
+            },
+          ),
         ],
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       // floatingActionButton의 위치 변경
     );
+  }
+
+  void addText() {
+    String _text = '';
+
+    final _textEditingController = TextEditingController();
+
+    @override
+    void initState() {
+      super.initState();
+      _textEditingController.addListener(() {});
+    }
+
+    @override
+    void dispose() {
+      _textEditingController.dispose();
+      super.dispose();
+    }
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
+            title: Column(
+              children: <Widget>[
+                Text("Input Text"),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                TextField(
+                  controller: _textEditingController,
+                )
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text("입력"),
+                onPressed: () {
+                  _text = _textEditingController.text;
+                  if (_text != '') {
+                    setState(() {
+                      _items.add(WriteTextPage(myText: _text));
+                    });
+                  }
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: Text("취소"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void deleteText() {
+    setState(() {});
   }
 }
