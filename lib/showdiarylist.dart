@@ -45,7 +45,7 @@ final List diaryList = [
   },
   {
     'image': 'assets/images/coverImages/8.png',
-    'title': 'myDiary0',
+    'title': 'myDiary9',
     'password': null
   },
   {
@@ -140,20 +140,7 @@ class ShowDiaryList extends StatelessWidget {
                   const Expanded(flex: 1, child: SizedBox()),
                 ],
               )),
-          Expanded(
-              flex: 1,
-              child: Draggable(
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  color: Colors.black,
-                ),
-                feedback: Container(
-                  width: 50,
-                  height: 50,
-                  color: Colors.red,
-                ),
-              )),
+          Expanded(flex: 1, child: Container()),
         ],
       ),
     );
@@ -169,20 +156,26 @@ class ListGridView extends StatefulWidget {
 class _ListGridViewState extends State<ListGridView> {
   @override
   Widget build(BuildContext context) {
-    return DragTarget(builder: (context, candidateData, rejectedData) {
-      return Container(
-          child: GridView.builder(
-        itemCount: diaryList.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            childAspectRatio: 3 / 4,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10),
-        itemBuilder: (context, index) => Container(
-          child: DiaryGridItem(listIndex: index),
-        ),
-      ));
-    });
+    return DragTarget(
+      builder: (context, candidateData, rejectedData) {
+        return Container(
+            child: GridView.builder(
+          itemCount: diaryList.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              childAspectRatio: 3 / 4,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10),
+          itemBuilder: (context, index) => Container(
+            child: DiaryGridItem(listIndex: index),
+          ),
+        ));
+      },
+      onWillAccept: (data) {
+        return true;
+      },
+      onAccept: (data) {},
+    );
   }
 }
 
@@ -194,7 +187,7 @@ class DiaryGridItem extends StatefulWidget {
 }
 
 class _DiaryGridItemState extends State<DiaryGridItem> {
-  int _maxSimultaneousDrags = 0;
+  int _maxSimultaneousDrags = 1;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -202,16 +195,11 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Draggable(
+          data: widget.listIndex,
           maxSimultaneousDrags: _maxSimultaneousDrags,
           child: Material(
               child: InkWell(
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.21,
-              height: MediaQuery.of(context).size.width * 0.28,
-              alignment: Alignment.center,
-              color:
-                  Colors.primaries[Random().nextInt(Colors.primaries.length)],
-            ),
+            child: diaryCover(context, widget.listIndex),
             onLongPress: () {
               setState(() {
                 _maxSimultaneousDrags = 1;
@@ -220,13 +208,7 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
           )),
           feedback: Material(
               child: InkWell(
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.22,
-              height: MediaQuery.of(context).size.height * 0.17,
-              alignment: Alignment.center,
-              color:
-                  Colors.primaries[Random().nextInt(Colors.primaries.length)],
-            ),
+            child: diaryCover(context, widget.listIndex),
             onLongPress: () {
               setState(() {
                 _maxSimultaneousDrags = 1;
@@ -250,4 +232,16 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
       ],
     );
   }
+}
+
+Widget diaryCover(context, int index) {
+  return Container(
+    width: MediaQuery.of(context).size.width * 0.21,
+    height: MediaQuery.of(context).size.width * 0.28,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+        image: DecorationImage(
+            image: AssetImage(diaryList.elementAt(index)['image'] ??
+                'assets/images/coverImages/default.png'))),
+  );
 }
