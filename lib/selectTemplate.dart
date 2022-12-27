@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/src/material/icons.dart';
 
 const basicTemplateList = [
   "Basic 1",
@@ -39,10 +40,14 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
               fontSize: 24,
               fontWeight: FontWeight.w700,
             )),
-        leading: null,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => print("Clicked"),
+        ),
       ),
       //BODY - Select Template
       body: ListView(shrinkWrap: true, children: [
+        //Basic Template
         Container(
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
           child: const Text(
@@ -60,8 +65,10 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                   _pageComponent(basicTemplateList[idx])),
               separatorBuilder: (context, idx) => const SizedBox(width: 15)),
         ),
+
+        //Custom Template
         Container(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+          padding: const EdgeInsets.fromLTRB(20, 50, 20, 10),
           child: const Text(
             "커스텀 템플릿",
             style: TextStyle(fontSize: 30),
@@ -77,8 +84,10 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                   _pageComponent(customTemplateList[idx])),
               separatorBuilder: (context, idx) => const SizedBox(width: 15)),
         ),
+
+        //DownLoad Template
         Container(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+          padding: const EdgeInsets.fromLTRB(20, 50, 20, 10),
           child: const Text(
             "다운로드 템플릿",
             style: TextStyle(fontSize: 30),
@@ -94,6 +103,7 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                   _pageComponent(downloadTemplateList[idx])),
               separatorBuilder: (context, idx) => const SizedBox(width: 15)),
         ),
+        const SizedBox(height: 50)
       ]),
     );
   }
