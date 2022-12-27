@@ -1,7 +1,8 @@
+import 'package:diory_project/edit_page.dart';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
 import 'selectTemplate.dart';
-import 'writePage.dart';
+import 'edit_text_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,8 +34,7 @@ class MyApp extends StatelessWidget {
             elevation: 0,
           ),
           textTheme: const TextTheme()),
-      home:
-          SelectTemplatePage(), //여기에서 처음에는 로그인 및 회원가입 화면으로, 이후 로그인상태에서는 홈화면으로 이동
+      home: EditPage(), //여기에서 처음에는 로그인 및 회원가입 화면으로, 이후 로그인상태에서는 홈화면으로 이동
     );
   }
 }
