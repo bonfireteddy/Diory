@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class EditTextPage extends StatefulWidget {
+class WriteTextPage extends StatefulWidget {
   String myText;
-  EditTextPage({Key? key, required this.myText}) : super(key: key);
+  WriteTextPage({Key? key, required this.myText}) : super(key: key);
   @override
-  _EditTextPageState createState() => _EditTextPageState();
+  _WriteTextPageState createState() => _WriteTextPageState();
 }
 
-class _EditTextPageState extends State<EditTextPage> {
+class _WriteTextPageState extends State<WriteTextPage> {
   Offset offset = Offset.zero;
   final _textController = TextEditingController();
 

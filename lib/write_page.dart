@@ -1,11 +1,11 @@
-import 'package:diory_project/edit_text_page.dart';
+import 'package:diory_project/write_text_page.dart';
 import 'package:flutter/material.dart';
 
-class EditPage extends StatefulWidget {
-  _EditPageState createState() => _EditPageState();
+class WritePage extends StatefulWidget {
+  _WritePageState createState() => _WritePageState();
 }
 
-class _EditPageState extends State<EditPage> {
+class _WritePageState extends State<WritePage> {
   final _items = <Widget>[];
 
   @override
@@ -70,7 +70,7 @@ class _EditPageState extends State<EditPage> {
                   _text = _textEditingController.text;
                   if (_text != '') {
                     setState(() {
-                      _items.add(EditTextPage(myText: _text));
+                      _items.add(WriteTextPage(myText: _text));
                     });
                   }
                   Navigator.pop(context);
