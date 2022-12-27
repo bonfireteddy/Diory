@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 
-class WritePage extends StatefulWidget {
+class EditTextPage extends StatefulWidget {
+  String myText;
+  EditTextPage({Key? key, required this.myText}) : super(key: key);
   @override
-  _WritePageState createState() => _WritePageState();
+  _EditTextPageState createState() => _EditTextPageState();
 }
 
-class _WritePageState extends State<WritePage> {
+class _EditTextPageState extends State<EditTextPage> {
   Offset offset = Offset.zero;
-  String text = "test";
   final _textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _textController.addListener(() {});
+    _textController.text = widget.myText;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,23 +33,27 @@ class _WritePageState extends State<WritePage> {
                 });
               },
               child: Container(
-                  height: 100,
-                  width: 200,
-                  color: Colors.white,
                   child: Center(
-                    child: Text(
-                      text,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Color.fromARGB(255, 0, 0, 0),
-                        fontWeight: FontWeight.normal,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                  )),
+                child: Text(
+                  widget.myText,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    fontWeight: FontWeight.normal,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              )),
               onLongPress: () => showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0)),
+                          title: Column(
+                            children: <Widget>[
+                              Text("Edit Text"),
+                            ],
+                          ),
                           content: Container(
                             height: 150,
                             width: 300,
@@ -54,7 +66,7 @@ class _WritePageState extends State<WritePage> {
                               onPressed: () {
                                 Navigator.of(context).pop();
                                 setState(() {
-                                  text = _textController.text;
+                                  widget.myText = _textController.text;
                                 });
                               },
                             ),
