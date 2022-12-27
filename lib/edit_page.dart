@@ -48,7 +48,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -81,10 +80,10 @@ class _MyHomePageState extends State<MyHomePage> {
         // 완료 TextButton으로 바뀌고 완료를 누르면 키보드가 내려가게 하는 이벤트
         actions: [
           if (MediaQuery.of(context).viewInsets.bottom > 0)
-          TextButton(
-            onPressed: FocusManager.instance.primaryFocus?.unfocus,
-            child: Text('완료', style: TextStyle(color: Colors.white)),
-          ),
+            TextButton(
+              onPressed: FocusManager.instance.primaryFocus?.unfocus,
+              child: Text('완료', style: TextStyle(color: Colors.white)),
+            ),
         ],
         // actions: <Widget>[
         //   IconButton(
@@ -95,7 +94,8 @@ class _MyHomePageState extends State<MyHomePage> {
         //   ),
         // ],
       ),
-      endDrawer: Drawer( // 햄버거 menu아이콘을 만들지 않아야 나온다!!! -> 햄버거 아이콘을 자동적으로 만들어줌
+      endDrawer: Drawer(
+        // 햄버거 menu아이콘을 만들지 않아야 나온다!!! -> 햄버거 아이콘을 자동적으로 만들어줌
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -117,7 +117,6 @@ class _MyHomePageState extends State<MyHomePage> {
       // ------------------------------------------------------
 
       body: Center(
-
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const <Widget>[
@@ -134,7 +133,6 @@ class _MyHomePageState extends State<MyHomePage> {
               maxLines: null,
             ),
           ],
-
         ),
       ),
 
@@ -146,33 +144,16 @@ class _MyHomePageState extends State<MyHomePage> {
         //animatedIcon: AnimatedIcons.menu_close, -> 기본아이콘이 햄버거로 정해져있음.
 
         children: [
-          SpeedDialChild(
-            child: Icon(Icons.share_rounded),
-            label: 'return'
-          ),
-          SpeedDialChild(
-            child: Icon(Icons.mail),
-              label: 'font change'
-          ),
-          SpeedDialChild(
-            child: Icon(Icons.copy),
-              label: 'text'
-          ),
-          SpeedDialChild(
-              child: Icon(Icons.copy),
-              label: 'sticker'
-          ),
-          SpeedDialChild(
-              child: Icon(Icons.copy),
-              label: 'gallery'
-          ),
+          SpeedDialChild(child: Icon(Icons.share_rounded), label: 'return'),
+          SpeedDialChild(child: Icon(Icons.mail), label: 'font change'),
+          SpeedDialChild(child: Icon(Icons.copy), label: 'text'),
+          SpeedDialChild(child: Icon(Icons.copy), label: 'sticker'),
+          SpeedDialChild(child: Icon(Icons.copy), label: 'gallery'),
         ],
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       // floatingActionButton의 위치 변경
-
-
     );
   }
 }
