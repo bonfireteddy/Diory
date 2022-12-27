@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'homepage.dart';
+import 'dart:math';
 
 class ShowDiaryList extends StatelessWidget {
   const ShowDiaryList({super.key});
@@ -81,10 +82,10 @@ class _ListGridViewState extends State<ListGridView> {
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           childAspectRatio: 3 / 4,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10),
+          mainAxisSpacing: 15,
+          crossAxisSpacing: 15),
       itemBuilder: (context, index) => Container(
-        color: Colors.blueGrey,
+        color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
       ),
     ));
   }
