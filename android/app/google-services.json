@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "273441332116",
+    "project_id": "dioryproject-ef767",
+    "storage_bucket": "dioryproject-ef767.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:273441332116:android:0f04c0a998d3410a664d81",
+        "android_client_info": {
+          "package_name": "com.example.diory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "273441332116-eiddoqo18i4k3utfl2it41d8ei6honnr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2NYfgOzcIjTWdozEoTGgXNMAnjEiCk6k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "273441332116-eiddoqo18i4k3utfl2it41d8ei6honnr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "273441332116-3b6tg9811ep5dts8d8op3046j71kaf98.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.diory"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
