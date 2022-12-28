@@ -1,4 +1,4 @@
-import 'package:diory_project/diary_createnew.dart';
+import 'package:diory_project/diary_setting.dart';
 import 'package:diory_project/diary_readingview.dart';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
@@ -238,7 +238,8 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
                     });
                   },
                   onTap: () {
-                    passwordCheck(context, widget.listIndex, diaryList);
+                    passwordCheck(context, widget.listIndex, diaryList,
+                        DiaryReadingView(index: widget.listIndex));
                   },
                 )),
                 feedback: Material(
@@ -261,7 +262,7 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
                     softWrap: false,
                     overflow: TextOverflow.clip,
                   )),
-                  diaryMenuButton(20)
+                  diaryMenuButton(context, 20, widget.listIndex)
                 ],
               )
             : const SizedBox(),
@@ -293,26 +294,35 @@ Widget addDiaryButton(context) {
 }
 
 Widget diaryCover(context, int index) {
+  final bool locked = diaryList.elementAt(index)['password'] != null;
   final bool bookmarked = diaryList.elementAt(index)['bookmarked'] ?? false;
   return Container(
-    width: MediaQuery.of(context).size.width * 0.21,
-    height: MediaQuery.of(context).size.width * 0.28,
-    alignment: Alignment.bottomRight,
-    padding: EdgeInsets.all(4),
-    decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 5.0,
-              spreadRadius: 0,
-              offset: Offset(0, 3))
+      width: MediaQuery.of(context).size.width * 0.21,
+      height: MediaQuery.of(context).size.width * 0.28,
+      alignment: Alignment.bottomCenter,
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+      decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 5.0,
+                spreadRadius: 0,
+                offset: const Offset(0, 3))
+          ],
+          image: DecorationImage(
+              image: AssetImage(diaryList.elementAt(index)['image'] ??
+                  'assets/images/coverImages/default.png'))),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Icon(
+            Icons.lock,
+            color: locked ? Colors.black : const Color(0x00000000),
+          ),
+          Icon(
+            bookmarked ? Icons.star_rate_rounded : Icons.star_border_rounded,
+            color: bookmarked ? Colors.amber : const Color(0x00000000),
+          ),
         ],
-        image: DecorationImage(
-            image: AssetImage(diaryList.elementAt(index)['image'] ??
-                'assets/images/coverImages/default.png'))),
-    child: Icon(
-      bookmarked ? Icons.star_rate_rounded : Icons.star_border_rounded,
-      color: bookmarked ? Colors.amber : Color(0x00000000),
-    ),
-  );
+      ));
 }
