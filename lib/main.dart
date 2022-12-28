@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_test.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,9 +43,7 @@ class MyApp extends StatelessWidget {
             color: Colors.amber,
           ),
           onPressed: () {
-            FirebaseFirestore.instance
-                .collection('post')
-                .add({'title': "123123", 'content': "aaaaaa"});
+            createDoc(123);
           },
         )
         // const MyHomePage(), //여기에서 처음에는 로그인 및 회원가입 화면으로, 이후 로그인상태에서는 홈화면으로 이동
