@@ -41,7 +41,7 @@ class _MyEditPageState extends State<MyEditPage> {
         // 중앙 정렬
         elevation: 0.0,
         // 앱바 밑에 내려오는 그림자 조절 가능
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.white,
         // leading: IconButton(
         //   icon: Icon(Icons.arrow_back),
         //   onPressed: () {
@@ -58,6 +58,11 @@ class _MyEditPageState extends State<MyEditPage> {
               onPressed: FocusManager.instance.primaryFocus?.unfocus,
               child: Text('완료', style: TextStyle(color: Colors.white)),
             ),
+          IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.check))
         ],
         // actions: <Widget>[
         //   IconButton(

@@ -1,3 +1,4 @@
+import 'package:diory_project/edit_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/material/icons.dart';
 
@@ -109,30 +110,39 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
   }
 
   _pageComponent(String text) {
-    return Container(
-      height: 190,
-      width: 120,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: const Color.fromARGB(124, 221, 221, 221),
-      ),
-      child: Column(
-        children: [
-          Container(
-            height: 160,
-            width: 120,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: const Color.fromARGB(124, 169, 169, 169),
-            ),
+    return GestureDetector(
+        onTap: () {
+          Navigator.pop(context);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyEditPage(title: 'title'),
+              ));
+        },
+        child: Container(
+          height: 190,
+          width: 120,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: const Color.fromARGB(124, 221, 221, 221),
           ),
-          const SizedBox(height: 6),
-          Text(
-            text,
-            style: const TextStyle(fontSize: 14),
-          )
-        ],
-      ),
-    );
+          child: Column(
+            children: [
+              Container(
+                height: 160,
+                width: 120,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: const Color.fromARGB(124, 169, 169, 169),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                text,
+                style: const TextStyle(fontSize: 14),
+              )
+            ],
+          ),
+        ));
   }
 }
