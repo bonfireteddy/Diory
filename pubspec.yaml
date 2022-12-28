@@ -39,6 +39,8 @@ dependencies:
     flutter_speed_dial:
     firebase_auth: ^4.2.3
     cloud_firestore: ^4.3.0
+    image_picker: ^0.8.6
+    flutterfire_ui: ^0.4.3+20
 
 dev_dependencies:
     flutter_test:

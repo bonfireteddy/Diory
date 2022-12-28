@@ -1,7 +1,7 @@
+import 'package:diory_project/diary_readingview.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
 
-import 'showdiarylist.dart';
+import 'diary_showlist.dart';
 
 final bookmarkedDiaryList = diaryList.where((e) => e['bookmarked']);
 
@@ -53,7 +53,7 @@ class MyHomePage extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ShowDiaryList()));
+                                  builder: (context) => DiaryShowList()));
                         }),
                       ),
                     ),
@@ -98,13 +98,20 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                     child: Container(
                       margin: EdgeInsets.all(20),
                       decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                blurRadius: 10.0,
+                                spreadRadius: 0,
+                                offset: Offset(0, 5))
+                          ],
                           image: DecorationImage(
                               image: AssetImage(bookmarkedDiaryList
                                       .elementAt(index)['image'] ??
                                   'assets/images/coverImages/default.png'))),
                     ),
                     onTap: () {
-                      passwordCheck(context, index);
+                      passwordCheck(context, index, bookmarkedDiaryList);
                     },
                   )));
             },
@@ -120,6 +127,9 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (bookmarkedDiaryList.elementAt(_currentPageIndex)['password'] !=
+                null)
+              const Icon(Icons.lock, size: 20),
             SizedBox(
               height: 30,
               child: PopupMenuButton(
@@ -143,7 +153,7 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                       curve: Curves.easeIn);
                 }),
                 child: Text(
-                  '${bookmarkedDiaryList.elementAt(_currentPageIndex)['title']}\t',
+                  ' ${bookmarkedDiaryList.elementAt(_currentPageIndex)['title']}\t',
                   style: const TextStyle(fontSize: 20),
                 ),
               ),
@@ -315,13 +325,13 @@ Widget diaryMenuButton(double size) {
   );
 }
 
-void passwordCheck(context, int index) {
-  String? password = bookmarkedDiaryList.elementAt(index)['password'];
+void passwordCheck(context, int index, diaryList) {
+  String? password = diaryList.elementAt(index)['password'];
   if (password == null) {
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ShowDiaryList(),
+          builder: (context) => DiaryReadingView(index: index),
         ));
     return;
   }
@@ -349,7 +359,7 @@ void passwordCheck(context, int index) {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ShowDiaryList(),
+                      builder: (context) => DiaryReadingView(index: index),
                     ));
               } else {
                 Navigator.pop(context);
