@@ -1,7 +1,25 @@
-import 'package:diory_project/attach_sticker.dart';
 import 'package:diory_project/write_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+
+class ItemController {
+  static int id = 0;
+  static List<WriteText> items = <WriteText>[];
+
+  static void add(WriteText item) {
+    items.add(item);
+  }
+
+  static void update(int id, String text) {
+    int index = items.indexWhere((item) => item.id == id);
+    if (index < 0) return;
+    items[index].text = text;
+  }
+
+  static void delete(int id) {
+    items.removeWhere((item) => item.id == id);
+  }
+}
 
 class EditPage extends StatelessWidget {
   const EditPage({Key? key}) : super(key: key);
@@ -30,8 +48,6 @@ class MyEditPage extends StatefulWidget {
 }
 
 class MyEditPageState extends State<MyEditPage> {
-  final _items = <WriteText>[];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +101,7 @@ class MyEditPageState extends State<MyEditPage> {
       body: Stack(children: [
         ElevatedButton(
             onPressed: () => {
-                  for (var item in _items)
+                  for (var item in ItemController.items)
                     print(item.dx.toString() + item.dy.toString() + item.text)
                 },
             child: Container(
@@ -93,7 +109,7 @@ class MyEditPageState extends State<MyEditPage> {
               height: 100,
               color: Colors.blue,
             )),
-        for (var item in _items) item
+        for (var item in ItemController.items) item
       ]),
 
       // ---------------------------------------------------------
@@ -104,6 +120,7 @@ class MyEditPageState extends State<MyEditPage> {
         //animatedIcon: AnimatedIcons.menu_close, -> 기본아이콘이 햄버거로 정해져있음.
 
         children: [
+          SpeedDialChild(child: Icon(Icons.arrow_downward), label: 'return'),
           SpeedDialChild(child: Icon(Icons.text_fields), label: 'font change'),
           SpeedDialChild(
             child: Icon(Icons.edit),
@@ -112,29 +129,16 @@ class MyEditPageState extends State<MyEditPage> {
               addText();
             },
           ),
-          // SpeedDialChild(
-          //   child: Icon(Icons.emoji_emotions),
-          //   label: 'sticker',
-          //   onTap: () {
-          //     addSticker();
-          //   },
-          // ),
-          // SpeedDialChild(
-          //     child: Icon(Icons.add_photo_alternate), label: 'gallery'),
-          // SpeedDialChild(
-          //   child: Icon(Icons.delete),
-          //   label: 'delete',
-          //   onTap: () {
-          //     clear();
-          //   },
-          // ),
-          // SpeedDialChild(
-          //   child: Icon(Icons.undo),
-          //   label: 'undo',
-          //   onTap: () {
-          //     undo();
-          //   },
-          // ),
+          SpeedDialChild(child: Icon(Icons.emoji_emotions), label: 'sticker'),
+          SpeedDialChild(
+              child: Icon(Icons.add_photo_alternate), label: 'gallery'),
+          SpeedDialChild(
+            child: Icon(Icons.delete),
+            label: 'delete',
+            onTap: () {
+              // deleteText();
+            },
+          ),
         ],
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
@@ -177,29 +181,28 @@ class MyEditPageState extends State<MyEditPage> {
               children: <Widget>[
                 TextField(
                   controller: _textEditingController,
-                  keyboardType: TextInputType.multiline,
-                  minLines: 1,
-                  maxLines: null,
-                ),
+                )
               ],
             ),
             actions: <Widget>[
-              TextButton(
-                child: Text("취소"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
               TextButton(
                 child: Text("입력"),
                 onPressed: () {
                   _text = _textEditingController.text;
                   if (_text != '') {
                     setState(() {
-                      var writetext = WriteText(text: _text);
-                      _items.add(writetext);
+                      var writetext =
+                          WriteText(id: ItemController.id, text: _text);
+                      ItemController.add(writetext);
+                      ItemController.id++;
                     });
                   }
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: Text("취소"),
+                onPressed: () {
                   Navigator.pop(context);
                 },
               ),
@@ -208,13 +211,13 @@ class MyEditPageState extends State<MyEditPage> {
         });
   }
 
-  void deleteText() {
-    for (int i = 0; i < _items.length; i++) {
-      if (!_items[i].isExist) {
-        setState(() {
-          _items.removeAt(i);
-        });
-      }
-    }
-  }
+  // void deleteText() {
+  //   for (int i = 0; i < itemController.items.length; i++) {
+  //     if (!itemController.items[i].isExist) {
+  //       setState(() {
+  //         itemController.items.removeAt(i);
+  //       });
+  //     }
+  //   }
+  // }
 }
