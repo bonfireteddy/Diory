@@ -1,3 +1,4 @@
+import 'package:diory_project/page.dart';
 import 'package:diory_project/write_page.dart';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
@@ -5,11 +6,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'selectTemplate.dart';
 import 'write_text_page.dart';
-import 'package:diory_project/edit_page.dart' as edit;
+import 'package:diory_project/edit_page.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  //WidgetsFlutterBinding.ensureInitialized();
+  //await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -39,8 +40,8 @@ class MyApp extends StatelessWidget {
             elevation: 0,
           ),
           textTheme: const TextTheme()),
-      home:
-          const MyHomePage(), //여기에서 처음에는 로그인 및 회원가입 화면으로, 이후 로그인상태에서는 홈화면으로 이동
+      home: const MyEditPage(
+          title: 'title'), //여기에서 처음에는 로그인 및 회원가입 화면으로, 이후 로그인상태에서는 홈화면으로 이동
     );
   }
 }

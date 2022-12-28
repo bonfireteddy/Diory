@@ -1,39 +1,9 @@
+import 'package:diory_project/write_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:diory_project/write_text_page.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      debugShowCheckedModeBanner: false,
-      // home: const MyHomePage(title: 'Who\'s diary'),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => HomePage(),
-        '/my': (context) => MyHomePage(title: 'Who\'s diary'),
-      },
-    );
-  }
-}
-
-// -------------------------------------------------------------------
-// -------------------------------------------------------------------
-
-// back arrow 누르면 나타나는 페이지
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+class EditPage extends StatelessWidget {
+  const EditPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -49,16 +19,16 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class MyEditPage extends StatefulWidget {
+  const MyEditPage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyEditPage> createState() => _MyEditPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyEditPageState extends State<MyEditPage> {
   final _items = <Widget>[];
 
   @override
@@ -222,7 +192,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   _text = _textEditingController.text;
                   if (_text != '') {
                     setState(() {
-                      _items.add(WriteTextPage(myText: _text));
+                      _items.add(WriteText(text: _text));
                     });
                   }
                   Navigator.pop(context);
