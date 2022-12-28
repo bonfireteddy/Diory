@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
             color: Colors.amber,
           ),
           onPressed: () {
-            createDoc(123);
+            writeDiary();
           },
         )
         // const MyHomePage(), //여기에서 처음에는 로그인 및 회원가입 화면으로, 이후 로그인상태에서는 홈화면으로 이동
