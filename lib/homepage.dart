@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'showdiarylist.dart';
 
+final bookmarkedDiaryList = diaryList.where((e) => e['bookmarked']);
+
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
   @override
@@ -86,7 +88,7 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
           color: Colors.white,
           child: PageView.builder(
             controller: pageController,
-            itemCount: diaryList.length,
+            itemCount: bookmarkedDiaryList.length,
             itemBuilder: (context, index) {
               return Container(
                   width: MediaQuery.of(context).size.width * 0.60 + 20,
@@ -97,35 +99,12 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                       margin: EdgeInsets.all(20),
                       decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: AssetImage(diaryList
-                                      .elementAt(_currentPageIndex)['image'] ??
+                              image: AssetImage(bookmarkedDiaryList
+                                      .elementAt(index)['image'] ??
                                   'assets/images/coverImages/default.png'))),
                     ),
                     onTap: () {
-                      String _valueText = '';
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text("비밀번호를 입력하세요"),
-                          content: TextField(
-                            onChanged: (value) {
-                              _valueText = value;
-                            },
-                          ),
-                          actions: [
-                            OutlinedButton(
-                                onPressed: (() {
-                                  Navigator.pop(context);
-                                }),
-                                child: const Text("취소")),
-                            ElevatedButton(
-                                onPressed: (() {
-                                  Navigator.pop(context, []);
-                                }),
-                                child: const Text("확인"))
-                          ],
-                        ),
-                      );
+                      passwordCheck(context, index);
                     },
                   )));
             },
@@ -151,7 +130,7 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                 itemBuilder: (context) {
                   List<PopupMenuEntry> a = [];
                   int index = 0;
-                  diaryList.forEach((e) {
+                  bookmarkedDiaryList.forEach((e) {
                     a.add(
                         PopupMenuItem(value: index++, child: Text(e['title'])));
                   });
@@ -164,7 +143,7 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                       curve: Curves.easeIn);
                 }),
                 child: Text(
-                  '${diaryList.elementAt(_currentPageIndex)['title']}\t',
+                  '${bookmarkedDiaryList.elementAt(_currentPageIndex)['title']}\t',
                   style: const TextStyle(fontSize: 20),
                 ),
               ),
@@ -334,4 +313,56 @@ Widget diaryMenuButton(double size) {
           ]),
     ),
   );
+}
+
+void passwordCheck(context, int index) {
+  String? password = bookmarkedDiaryList.elementAt(index)['password'];
+  if (password == null) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ShowDiaryList(),
+        ));
+    return;
+  }
+  String valueText = '';
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("비밀번호를 입력하세요"),
+      content: TextField(
+        onChanged: (value) {
+          valueText = value;
+        },
+      ),
+      actions: [
+        OutlinedButton(
+            onPressed: (() {
+              valueText = '';
+              Navigator.pop(context);
+            }),
+            child: const Text("취소")),
+        ElevatedButton(
+            onPressed: (() {
+              if (valueText == password) {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ShowDiaryList(),
+                    ));
+              } else {
+                Navigator.pop(context);
+                showDialog(
+                    context: context,
+                    builder: (context) => const AlertDialog(
+                          content: Text('비밀번호가 틀렸습니다.'),
+                        ));
+              }
+            }),
+            child: const Text("확인"))
+      ],
+    ),
+  );
+  return;
 }
