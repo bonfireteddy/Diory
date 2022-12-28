@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'showdiarylist.dart';
 
+final bookmarkedDiaryList = diaryList.where((e) => e['bookmarked']);
+
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
   @override
@@ -75,63 +77,36 @@ class HomeDiaryPageView extends StatefulWidget {
 class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
   int _currentPageIndex = 0;
   PageController pageController = PageController(initialPage: 0);
-  final List diaryList = [
-    {'image': null, 'title': 'My Diary 1', 'password': 'qwer'},
-    {'image': null, 'title': 'Mydiary 2', 'password': null},
-    {'image': null, 'title': 'MY_Diary3', 'password': 'qwer'},
-    {'image': null, 'title': 'my diary 4', 'password': null},
-    {'image': null, 'title': 'My-Diary5', 'password': null},
-  ];
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Container(
+          alignment: Alignment.center,
           width: double.infinity,
           height: MediaQuery.of(context).size.height * 0.55,
           color: Colors.white,
           child: PageView.builder(
             controller: pageController,
-            itemCount: diaryList.length,
+            itemCount: bookmarkedDiaryList.length,
             itemBuilder: (context, index) {
-              return Material(
-                  child: InkWell(
-                child: Container(
-                  margin: const EdgeInsets.all(20),
-                  color: Colors
-                      .primaries[Random().nextInt(Colors.primaries.length)],
-                  child: Text(
-                    (index + 1).toString(),
-                    style: TextStyle(fontSize: 100),
-                  ),
-                ),
-                onTap: () {
-                  String _valueText = '';
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text("비밀번호를 입력하세요"),
-                      content: TextField(
-                        onChanged: (value) {
-                          _valueText = value;
-                        },
-                      ),
-                      actions: [
-                        OutlinedButton(
-                            onPressed: (() {
-                              Navigator.pop(context);
-                            }),
-                            child: const Text("취소")),
-                        ElevatedButton(
-                            onPressed: (() {
-                              Navigator.pop(context, []);
-                            }),
-                            child: const Text("확인"))
-                      ],
+              return Container(
+                  width: MediaQuery.of(context).size.width * 0.60 + 20,
+                  height: MediaQuery.of(context).size.width * 0.80 + 20,
+                  child: Material(
+                      child: InkWell(
+                    child: Container(
+                      margin: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage(bookmarkedDiaryList
+                                      .elementAt(index)['image'] ??
+                                  'assets/images/coverImages/default.png'))),
                     ),
-                  );
-                },
-              ));
+                    onTap: () {
+                      passwordCheck(context, index);
+                    },
+                  )));
             },
             onPageChanged: (value) {
               setState(() {
@@ -154,10 +129,10 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                     borderRadius: BorderRadius.all(Radius.circular(10))),
                 itemBuilder: (context) {
                   List<PopupMenuEntry> a = [];
-                  int _index = 0;
-                  diaryList.forEach((e) {
-                    a.add(PopupMenuItem(
-                        value: _index++, child: Text(e['title'])));
+                  int index = 0;
+                  bookmarkedDiaryList.forEach((e) {
+                    a.add(
+                        PopupMenuItem(value: index++, child: Text(e['title'])));
                   });
                   return a;
                 },
@@ -168,39 +143,12 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                       curve: Curves.easeIn);
                 }),
                 child: Text(
-                  '${diaryList.elementAt(_currentPageIndex)['title']}\t',
+                  '${bookmarkedDiaryList.elementAt(_currentPageIndex)['title']}\t',
                   style: const TextStyle(fontSize: 20),
                 ),
               ),
             ),
-            SizedBox(
-              height: 30,
-              width: 30,
-              child: PopupMenuButton(
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                icon: const Icon(Icons.keyboard_arrow_down),
-                itemBuilder: ((context) => [
-                      PopupMenuItem(
-                        child: Text('표지 바꾸기'),
-                        onTap: null,
-                      ),
-                      PopupMenuItem(
-                        child: Text('잠금 설정'),
-                        onTap: null,
-                      ),
-                      PopupMenuItem(
-                        child: Text(
-                          '다이어리 삭제',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                        onTap: null,
-                      ),
-                    ]),
-              ),
-            ),
+            diaryMenuButton(30)
           ],
         )
       ],
@@ -333,4 +281,88 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
       ]),
     );
   }
+}
+
+Widget diaryMenuButton(double size) {
+  return SizedBox(
+    height: size < 30 ? 30 : size,
+    width: size < 30 ? 30 : size,
+    child: PopupMenuButton(
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10))),
+      icon: const Icon(Icons.keyboard_arrow_down),
+      iconSize: size,
+      itemBuilder: ((context) => [
+            PopupMenuItem(
+              child: Text('표지 바꾸기'),
+              onTap: null,
+            ),
+            PopupMenuItem(
+              child: Text('잠금 설정'),
+              onTap: null,
+            ),
+            PopupMenuItem(
+              child: Text(
+                '다이어리 삭제',
+                style: TextStyle(color: Colors.red),
+              ),
+              onTap: null,
+            ),
+          ]),
+    ),
+  );
+}
+
+void passwordCheck(context, int index) {
+  String? password = bookmarkedDiaryList.elementAt(index)['password'];
+  if (password == null) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ShowDiaryList(),
+        ));
+    return;
+  }
+  String valueText = '';
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("비밀번호를 입력하세요"),
+      content: TextField(
+        onChanged: (value) {
+          valueText = value;
+        },
+      ),
+      actions: [
+        OutlinedButton(
+            onPressed: (() {
+              valueText = '';
+              Navigator.pop(context);
+            }),
+            child: const Text("취소")),
+        ElevatedButton(
+            onPressed: (() {
+              if (valueText == password) {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ShowDiaryList(),
+                    ));
+              } else {
+                Navigator.pop(context);
+                showDialog(
+                    context: context,
+                    builder: (context) => const AlertDialog(
+                          content: Text('비밀번호가 틀렸습니다.'),
+                        ));
+              }
+            }),
+            child: const Text("확인"))
+      ],
+    ),
+  );
+  return;
 }
