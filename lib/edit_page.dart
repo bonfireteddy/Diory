@@ -1,39 +1,10 @@
+import 'package:diory_project/attach_sticker.dart';
+import 'package:diory_project/write_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:diory_project/write_text_page.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      debugShowCheckedModeBanner: false,
-      // home: const MyHomePage(title: 'Who\'s diary'),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => HomePage(),
-        '/my': (context) => MyHomePage(title: 'Who\'s diary'),
-      },
-    );
-  }
-}
-
-// -------------------------------------------------------------------
-// -------------------------------------------------------------------
-
-// back arrow 누르면 나타나는 페이지
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+class EditPage extends StatelessWidget {
+  const EditPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -49,16 +20,16 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class MyEditPage extends StatefulWidget {
+  const MyEditPage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyEditPage> createState() => _MyEditPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyEditPageState extends State<MyEditPage> {
   final _items = <Widget>[];
 
   @override
@@ -151,7 +122,6 @@ class _MyHomePageState extends State<MyHomePage> {
         //animatedIcon: AnimatedIcons.menu_close, -> 기본아이콘이 햄버거로 정해져있음.
 
         children: [
-          SpeedDialChild(child: Icon(Icons.arrow_downward), label: 'return'),
           SpeedDialChild(child: Icon(Icons.text_fields), label: 'font change'),
           SpeedDialChild(
             child: Icon(Icons.edit),
@@ -160,14 +130,27 @@ class _MyHomePageState extends State<MyHomePage> {
               addText();
             },
           ),
-          SpeedDialChild(child: Icon(Icons.emoji_emotions), label: 'sticker'),
+          SpeedDialChild(
+            child: Icon(Icons.emoji_emotions),
+            label: 'sticker',
+            onTap: () {
+              addSticker();
+            },
+          ),
           SpeedDialChild(
               child: Icon(Icons.add_photo_alternate), label: 'gallery'),
           SpeedDialChild(
             child: Icon(Icons.delete),
             label: 'delete',
             onTap: () {
-              deleteText();
+              clear();
+            },
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.undo),
+            label: 'undo',
+            onTap: () {
+              undo();
             },
           ),
         ],
@@ -212,25 +195,28 @@ class _MyHomePageState extends State<MyHomePage> {
               children: <Widget>[
                 TextField(
                   controller: _textEditingController,
-                )
+                  keyboardType: TextInputType.multiline,
+                  minLines: 1,
+                  maxLines: null,
+                ),
               ],
             ),
             actions: <Widget>[
+              TextButton(
+                child: Text("취소"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
               TextButton(
                 child: Text("입력"),
                 onPressed: () {
                   _text = _textEditingController.text;
                   if (_text != '') {
                     setState(() {
-                      _items.add(WriteTextPage(myText: _text));
+                      _items.add(WriteText(text: _text));
                     });
                   }
-                  Navigator.pop(context);
-                },
-              ),
-              TextButton(
-                child: Text("취소"),
-                onPressed: () {
                   Navigator.pop(context);
                 },
               ),
@@ -239,10 +225,29 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
-  void deleteText() {
-    for (int i = 0; i < _items.length; i++) {
-      _items[i].key;
+  void addSticker() {
+    setState(() {
+      _items.add(AttachSticker(
+          sticker: Image(
+        image: AssetImage("assets/stickers/sticker_1.png"),
+        width: 100,
+        height: 100,
+      )));
+    });
+    print(_items);
+  }
+
+  void clear() {
+    for (int i = _items.length - 1; i >= 0; i--) {
+      setState(() {
+        _items.removeAt(i);
+      });
     }
-    setState(() {});
+  }
+
+  void undo() {
+    setState(() {
+      if (!_items.isEmpty) _items.removeAt(_items.length - 1);
+    });
   }
 }
