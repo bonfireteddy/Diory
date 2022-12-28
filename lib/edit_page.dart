@@ -26,11 +26,11 @@ class MyEditPage extends StatefulWidget {
   final String title;
 
   @override
-  State<MyEditPage> createState() => _MyEditPageState();
+  State<MyEditPage> createState() => MyEditPageState();
 }
 
-class _MyEditPageState extends State<MyEditPage> {
-  final _items = <Widget>[];
+class MyEditPageState extends State<MyEditPage> {
+  final _items = <WriteText>[];
 
   @override
   Widget build(BuildContext context) {
@@ -59,14 +59,6 @@ class _MyEditPageState extends State<MyEditPage> {
               child: Text('완료', style: TextStyle(color: Colors.white)),
             ),
         ],
-        // actions: <Widget>[
-        //   IconButton(
-        //     icon: const Icon(Icons.menu),
-        //     onPressed: () {
-        //       print('menu button is clicked');
-        //     },
-        //   ),
-        // ],
       ),
       endDrawer: Drawer(
         // 햄버거 menu아이콘을 만들지 않아야 나온다!!! -> 햄버거 아이콘을 자동적으로 만들어줌
@@ -90,29 +82,19 @@ class _MyEditPageState extends State<MyEditPage> {
       ),
       // ------------------------------------------------------
 
-      body: Stack(
-        children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const <Widget>[
-                TextField(
-                  style: TextStyle(fontSize: 30.0),
-                  decoration: InputDecoration(
-                    // font 변경방법?
-                    labelText: '제목을 입력하세요',
-                    isDense: true,
-                  ),
-                  minLines: 60,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                ),
-              ],
-            ),
-          ),
-          for (var item in _items) item
-        ],
-      ),
+      body: Stack(children: [
+        ElevatedButton(
+            onPressed: () => {
+                  for (var item in _items)
+                    print(item.dx.toString() + item.dy.toString() + item.text)
+                },
+            child: Container(
+              width: 100,
+              height: 100,
+              color: Colors.blue,
+            )),
+        for (var item in _items) item
+      ]),
 
       // ---------------------------------------------------------
 
@@ -214,7 +196,8 @@ class _MyEditPageState extends State<MyEditPage> {
                   _text = _textEditingController.text;
                   if (_text != '') {
                     setState(() {
-                      _items.add(WriteText(text: _text));
+                      var writetext = WriteText(text: _text);
+                      _items.add(writetext);
                     });
                   }
                   Navigator.pop(context);
@@ -225,29 +208,13 @@ class _MyEditPageState extends State<MyEditPage> {
         });
   }
 
-  void addSticker() {
-    setState(() {
-      _items.add(AttachSticker(
-          sticker: Image(
-        image: AssetImage("assets/stickers/sticker_1.png"),
-        width: 100,
-        height: 100,
-      )));
-    });
-    print(_items);
-  }
-
-  void clear() {
-    for (int i = _items.length - 1; i >= 0; i--) {
-      setState(() {
-        _items.removeAt(i);
-      });
+  void deleteText() {
+    for (int i = 0; i < _items.length; i++) {
+      if (!_items[i].isExist) {
+        setState(() {
+          _items.removeAt(i);
+        });
+      }
     }
-  }
-
-  void undo() {
-    setState(() {
-      if (!_items.isEmpty) _items.removeAt(_items.length - 1);
-    });
   }
 }

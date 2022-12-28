@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'edit_page.dart';
 
 class WriteText extends StatefulWidget {
   String text;
   double dx;
   double dy;
+  bool isExist = true;
 
   WriteText({Key? key, required this.text, this.dx = 0.0, this.dy = 0.0})
       : super(key: key);
@@ -68,22 +70,41 @@ class _WriteTextState extends State<WriteText> {
               onLongPress: () => showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)),
-                      title: Column(
-                        children: <Widget>[
-                          Text("Edit Text"),
-                        ],
-                      ),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          TextField(
-                            controller: _textController,
-                            keyboardType: TextInputType.multiline,
-                            minLines: 1,
-                            maxLines: null,
+
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0)),
+                        title: Column(
+                          children: <Widget>[
+                            Text("Edit Text"),
+                          ],
+                        ),
+                        content: Container(
+                          height: 150,
+                          width: 300,
+                          color: Color.fromARGB(0, 177, 177, 177),
+                        ),
+                        actions: <Widget>[
+                          TextField(controller: _textController),
+                          TextButton(
+                            child: const Text('확인'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              setState(() {
+                                widget.text = _textController.text;
+                              });
+                            },
+                          ),
+                          TextButton(
+                            child: const Text(
+                              '삭제',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              setState(() {
+                                widget.isExist = false;
+                              });
+                            },
                           ),
                         ],
                       ),
