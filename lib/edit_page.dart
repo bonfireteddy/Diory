@@ -240,6 +240,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void deleteText() {
+    for (int i = 0; i < _items.length; i++) {
+      _items[i].key;
+    }
     setState(() {});
   }
 }
