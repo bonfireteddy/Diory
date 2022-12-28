@@ -41,10 +41,11 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
               fontSize: 24,
               fontWeight: FontWeight.w700,
             )),
+        /*
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => print("Clicked"),
-        ),
+        ),*/
       ),
       //BODY - Select Template
       body: ListView(shrinkWrap: true, children: [
