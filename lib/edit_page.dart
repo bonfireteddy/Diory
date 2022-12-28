@@ -112,29 +112,29 @@ class MyEditPageState extends State<MyEditPage> {
               addText();
             },
           ),
-          SpeedDialChild(
-            child: Icon(Icons.emoji_emotions),
-            label: 'sticker',
-            onTap: () {
-              addSticker();
-            },
-          ),
-          SpeedDialChild(
-              child: Icon(Icons.add_photo_alternate), label: 'gallery'),
-          SpeedDialChild(
-            child: Icon(Icons.delete),
-            label: 'delete',
-            onTap: () {
-              clear();
-            },
-          ),
-          SpeedDialChild(
-            child: Icon(Icons.undo),
-            label: 'undo',
-            onTap: () {
-              undo();
-            },
-          ),
+          // SpeedDialChild(
+          //   child: Icon(Icons.emoji_emotions),
+          //   label: 'sticker',
+          //   onTap: () {
+          //     addSticker();
+          //   },
+          // ),
+          // SpeedDialChild(
+          //     child: Icon(Icons.add_photo_alternate), label: 'gallery'),
+          // SpeedDialChild(
+          //   child: Icon(Icons.delete),
+          //   label: 'delete',
+          //   onTap: () {
+          //     clear();
+          //   },
+          // ),
+          // SpeedDialChild(
+          //   child: Icon(Icons.undo),
+          //   label: 'undo',
+          //   onTap: () {
+          //     undo();
+          //   },
+          // ),
         ],
       ),
       // This trailing comma makes auto-formatting nicer for build methods.

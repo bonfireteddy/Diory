@@ -45,9 +45,9 @@ class _WriteTextState extends State<WriteText> {
     return Stack(
       children: <Widget>[
         Positioned(
-          left: widget.dx,
-          top: widget.dy,
-          child: GestureDetector(
+            left: widget.dx,
+            top: widget.dy,
+            child: GestureDetector(
               onPanUpdate: (details) {
                 setState(() {
                   widget.dx += details.delta.dx;
@@ -68,60 +68,47 @@ class _WriteTextState extends State<WriteText> {
                 ),
               ),
               onLongPress: () => showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0)),
-                        title: Column(
-                          children: <Widget>[
-                            Text("Edit Text"),
-                          ],
-                        ),
-                        content: Container(
-                          height: 150,
-                          width: 300,
-                          color: Color.fromARGB(0, 177, 177, 177),
-                        ),
-                        actions: <Widget>[
-                          TextField(controller: _textController),
-                          TextButton(
-                            child: const Text('확인'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              setState(() {
-                                widget.text = _textController.text;
-                              });
-                            },
-                          ),
-                          TextButton(
-                            child: const Text(
-                              '삭제',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              setState(() {
-                                widget.isExist = false;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text("확인"),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            setState(() {
-                              widget.text = _textController.text;
-                            });
-                          },
-                        ),
-                      ],
+                context: context,
+                builder: (context) => AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0)),
+                  title: Column(
+                    children: <Widget>[
+                      Text("Edit Text"),
+                    ],
+                  ),
+                  content: Container(
+                    height: 150,
+                    width: 300,
+                    color: Color.fromARGB(0, 177, 177, 177),
+                  ),
+                  actions: <Widget>[
+                    TextField(controller: _textController),
+                    TextButton(
+                      child: const Text('확인'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        setState(() {
+                          widget.text = _textController.text;
+                        });
+                      },
                     ),
-                  )),
-        ),
+                    TextButton(
+                      child: const Text(
+                        '삭제',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        setState(() {
+                          widget.isExist = false;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            )),
       ],
     );
   }

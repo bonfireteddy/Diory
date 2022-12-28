@@ -24,7 +24,7 @@ void main() async {
     const EmailProviderConfiguration(),
     const GoogleProviderConfiguration(clientId: clientId),
   ]);
-  
+
   runApp(const MyApp());
 }
 
@@ -54,7 +54,9 @@ class MyApp extends StatelessWidget {
             elevation: 0,
           ),
           textTheme: const TextTheme()),
-      home: const Login(), //여기에서 처음에는 로그인 및 회원가입 화면으로, 이후 로그인상태에서는 홈화면으로 이동
+      home: const MyEditPage(
+        title: "asd",
+      ), //여기에서 처음에는 로그인 및 회원가입 화면으로, 이후 로그인상태에서는 홈화면으로 이동
     );
   }
 }
