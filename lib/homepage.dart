@@ -1,12 +1,18 @@
 import 'package:diory_project/diary_readingview.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'diary_showlist.dart';
 
 final bookmarkedDiaryList = diaryList.where((e) => e['bookmarked']);
+final FirebaseAuth userInfo = FirebaseAuth.instance;
 
 class MyHomePage extends StatelessWidget {
+  //final arguments;
   const MyHomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -197,7 +203,17 @@ class DrawerMenuBar extends StatefulWidget {
 }
 
 class _DrawerMenuBarState extends State<DrawerMenuBar> {
-  final String alias = '오리너구리'; //사용자 별명
+  /*
+  Future<void> inputData() async {
+    final user = await userInfo.currentUser;
+    final userUid = user!.uid;
+  }
+   */
+
+  final userUid = userInfo.currentUser!.uid;
+  final String? alias = userInfo.currentUser!.email;
+
+  //final String alias = '오리너구리'; //사용자 별명
   final String accountImageUrl =
       'assets/images/account_icon_image.png'; //프로필 사진 주소
   @override
