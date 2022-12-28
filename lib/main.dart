@@ -11,7 +11,7 @@ import 'write_text_page.dart';
 import 'package:diory_project/edit_page.dart';
 import 'firebase_test.dart';
 import 'login.dart';
-import 'package:diory_project/edit_page.dart';
+import 'package:diory_project/edit_page.dart' as edit;
 
 const clientId = 'YOUR_CLIENT_ID';
 
@@ -25,7 +25,7 @@ void main() async {
     const EmailProviderConfiguration(),
     const GoogleProviderConfiguration(clientId: clientId),
   ]);
-
+  
   runApp(const MyApp());
 }
 
