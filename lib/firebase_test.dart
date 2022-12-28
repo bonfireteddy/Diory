@@ -1,18 +1,40 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+
+var db = FirebaseFirestore.instance;
 
 void createDoc(int id) {
-  Firebase.initializeApp();
-  var db = FirebaseFirestore.instance;
-  // Create a new user with a first and last name
-  final user = <String, dynamic>{
+  final data = <String, dynamic>{
     "first": "Ada",
     "last": "Lovelace",
     "born": 1815
   };
-  print(user);
-// Add a new document with a generated ID
-  db.collection("post").add(user).then((DocumentReference doc) =>
-      print('DocumentSnapshot added with ID: ${doc.id}'));
+  db.collection("post").doc("1").update(data);
+}
+
+void writeDiary() {
+  var data = {
+    "id": "",
+    "userid": "BWBe0HQ2h50rhCCGtW9J",
+    "pages": [
+      {
+        "components": [
+          {
+            "type": "Text",
+            "text": "테스트 텍스트",
+            "x": 100,
+            "y": 100,
+          },
+          {
+            "type": "Sticker",
+            "stickeridx": 0,
+            "x": 100,
+            "y": 100,
+          }
+        ],
+        "templateid": "tStt41YZpDRin0T4Ijbx"
+      }
+    ]
+  };
+
+  db.collection("Diarys").add(data);
 }
