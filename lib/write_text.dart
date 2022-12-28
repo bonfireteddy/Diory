@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'edit_page.dart';
 
 class WriteText extends StatefulWidget {
   String text;
   double dx;
   double dy;
+  bool isExist = true;
 
   WriteText({Key? key, required this.text, this.dx = 0.0, this.dy = 0.0})
       : super(key: key);
@@ -99,7 +101,7 @@ class _WriteTextState extends State<WriteText> {
                             onPressed: () {
                               Navigator.of(context).pop();
                               setState(() {
-                                widget.text = _textController.text;
+                                widget.isExist = false;
                               });
                             },
                           ),

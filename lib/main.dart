@@ -1,12 +1,11 @@
 import 'package:diory_project/page.dart';
-import 'package:diory_project/write_page.dart';
 import 'package:flutter/material.dart';
-import 'homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import 'edit_page.dart';
+import 'homepage.dart';
 import 'selectTemplate.dart';
-import 'write_text_page.dart';
-import 'package:diory_project/edit_page.dart';
 import 'firebase_test.dart';
 
 void main() async {
@@ -36,7 +35,6 @@ class MyApp extends StatelessWidget {
               size: 32,
             ),
           ),
-
           drawerTheme: const DrawerThemeData(
             scrimColor: Colors.white,
             elevation: 0,
@@ -45,12 +43,5 @@ class MyApp extends StatelessWidget {
       home: const MyEditPage(
           title: 'title'), //여기에서 처음에는 로그인 및 회원가입 화면으로, 이후 로그인상태에서는 홈화면으로 이동
     );
-
-          onPressed: () {
-            writeDiary();
-          },
-        )
-        // const MyHomePage(), //여기에서 처음에는 로그인 및 회원가입 화면으로, 이후 로그인상태에서는 홈화면으로 이동
-        );
   }
 }
