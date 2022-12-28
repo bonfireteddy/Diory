@@ -2,86 +2,102 @@ import 'package:flutter/material.dart';
 import 'homepage.dart';
 import 'dart:math';
 
-final List diaryList = [
+List diaryList = [
   {
     'image': 'assets/images/coverImages/0.png',
     'title': 'My Diary 1',
-    'password': 'qwer'
+    'password': 'qwer',
+    'bookmarked': true,
   },
   {
     'image': 'assets/images/coverImages/1.png',
     'title': 'Mydiary 2',
-    'password': null
+    'password': null,
+    'bookmarked': false,
   },
   {
     'image': 'assets/images/coverImages/2.png',
     'title': 'MY_Diary3',
-    'password': 'qwer'
+    'password': 'qwer',
+    'bookmarked': true,
   },
   {
     'image': 'assets/images/coverImages/3.png',
     'title': 'my diary 4',
-    'password': null
+    'password': null,
+    'bookmarked': false,
   },
   {
     'image': 'assets/images/coverImages/4.png',
     'title': 'My-Diary5',
-    'password': null
+    'password': null,
+    'bookmarked': true,
   },
   {
     'image': 'assets/images/coverImages/5.png',
     'title': 'myDiary6',
-    'password': null
+    'password': null,
+    'bookmarked': false,
   },
   {
     'image': 'assets/images/coverImages/6.png',
     'title': 'myDiary7',
-    'password': null
+    'password': null,
+    'bookmarked': true,
   },
   {
     'image': 'assets/images/coverImages/7.png',
     'title': 'myDiary8',
-    'password': null
+    'password': null,
+    'bookmarked': false,
   },
   {
     'image': 'assets/images/coverImages/8.png',
     'title': 'myDiary9',
-    'password': null
+    'password': null,
+    'bookmarked': false,
   },
   {
     'image': 'assets/images/coverImages/9.png',
     'title': 'myDiary10',
-    'password': null
+    'password': null,
+    'bookmarked': false,
   },
   {
     'image': 'assets/images/coverImages/10.png',
     'title': 'myDiary11',
-    'password': null
+    'password': null,
+    'bookmarked': false,
   },
   {
     'image': 'assets/images/coverImages/11.png',
     'title': 'myDiary12',
-    'password': null
+    'password': null,
+    'bookmarked': false,
   },
   {
     'image': 'assets/images/coverImages/12.png',
     'title': 'myDiary13',
-    'password': null
+    'password': null,
+    'bookmarked': false,
   },
   {
     'image': 'assets/images/coverImages/13.png',
     'title': 'myDiary14',
-    'password': null
+    'password': null,
+    'bookmarked': false,
   },
   {
     'image': 'assets/images/coverImages/14.png',
     'title': 'myDiary15',
-    'password': null
+    'password': null,
+    'bookmarked': false,
   },
   {
     'image': 'assets/images/coverImages/15.png',
     'title': 'myDiary16',
-    'password': null
+    'password': null,
+    'bookmarked': true,
   },
 ];
 
@@ -156,26 +172,32 @@ class ListGridView extends StatefulWidget {
 class _ListGridViewState extends State<ListGridView> {
   @override
   Widget build(BuildContext context) {
-    return DragTarget(
-      builder: (context, candidateData, rejectedData) {
-        return Container(
-            child: GridView.builder(
-          itemCount: diaryList.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: 3 / 4,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10),
-          itemBuilder: (context, index) => Container(
-            child: DiaryGridItem(listIndex: index),
-          ),
-        ));
-      },
-      onWillAccept: (data) {
-        return true;
-      },
-      onAccept: (data) {},
-    );
+    return Container(
+        child: GridView.builder(
+            itemCount: diaryList.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 3 / 4,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10),
+            itemBuilder: (context, index) => DragTarget(
+                  builder: (context, candidateData, rejectedData) => Container(
+                    child: DiaryGridItem(listIndex: index),
+                  ),
+                  onWillAccept: (data) => true,
+                  onAccept: (data) {
+                    int fromIndex = int.tryParse(data.toString()) ?? -1;
+                    if (fromIndex == -1) return;
+                    int largerIndex = index > fromIndex ? index : fromIndex;
+                    int smallerIndex = index < fromIndex ? index : fromIndex;
+                    setState(() {
+                      diaryList.insert(
+                          smallerIndex, diaryList.removeAt(largerIndex));
+                      diaryList.insert(
+                          largerIndex, diaryList.removeAt(smallerIndex + 1));
+                    });
+                  },
+                )));
   }
 }
 
@@ -203,6 +225,8 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
             onLongPress: () {
               setState(() {
                 _maxSimultaneousDrags = 1;
+                diaryList.elementAt(widget.listIndex)['bookmarked'] =
+                    !diaryList.elementAt(widget.listIndex)['bookmarked'];
               });
             },
           )),
@@ -215,6 +239,10 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
               });
             },
           )),
+          childWhenDragging: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.21,
+            height: MediaQuery.of(context).size.width * 0.28,
+          ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -235,13 +263,19 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
 }
 
 Widget diaryCover(context, int index) {
+  final bool bookmarked = diaryList.elementAt(index)['bookmarked'] ?? false;
   return Container(
     width: MediaQuery.of(context).size.width * 0.21,
     height: MediaQuery.of(context).size.width * 0.28,
-    alignment: Alignment.center,
+    alignment: Alignment.bottomRight,
+    padding: EdgeInsets.all(4),
     decoration: BoxDecoration(
         image: DecorationImage(
             image: AssetImage(diaryList.elementAt(index)['image'] ??
                 'assets/images/coverImages/default.png'))),
+    child: Icon(
+      bookmarked ? Icons.star_rate_rounded : Icons.star_border_rounded,
+      color: bookmarked ? Colors.amber : Color(0x00000000),
+    ),
   );
 }
