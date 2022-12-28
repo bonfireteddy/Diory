@@ -1,3 +1,5 @@
+import 'package:diory_project/diary_createnew.dart';
+import 'package:diory_project/diary_readingview.dart';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
 import 'dart:math';
@@ -101,8 +103,8 @@ List diaryList = [
   },
 ];
 
-class ShowDiaryList extends StatelessWidget {
-  const ShowDiaryList({super.key});
+class DiaryShowList extends StatelessWidget {
+  const DiaryShowList({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,7 +155,7 @@ class ShowDiaryList extends StatelessWidget {
                     ),
                   ),
                   const Expanded(flex: 12, child: ListGridView()),
-                  const Expanded(flex: 1, child: SizedBox()),
+                  Expanded(flex: 2, child: Container()),
                 ],
               )),
           Expanded(flex: 1, child: Container()),
@@ -174,7 +176,7 @@ class _ListGridViewState extends State<ListGridView> {
   Widget build(BuildContext context) {
     return Container(
         child: GridView.builder(
-            itemCount: diaryList.length,
+            itemCount: diaryList.length + 1,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 3 / 4,
@@ -182,14 +184,17 @@ class _ListGridViewState extends State<ListGridView> {
                 crossAxisSpacing: 10),
             itemBuilder: (context, index) => DragTarget(
                   builder: (context, candidateData, rejectedData) => Container(
-                    child: DiaryGridItem(listIndex: index),
+                    child: DiaryGridItem(listIndex: index - 1),
                   ),
-                  onWillAccept: (data) => true,
+                  onWillAccept: (data) => int.parse(data.toString()) != -1,
                   onAccept: (data) {
                     int fromIndex = int.tryParse(data.toString()) ?? -1;
-                    if (fromIndex == -1) return;
-                    int largerIndex = index > fromIndex ? index : fromIndex;
-                    int smallerIndex = index < fromIndex ? index : fromIndex;
+                    int toIndex = index - 1;
+                    if (toIndex == -1 || toIndex == fromIndex) return;
+                    int largerIndex = toIndex > fromIndex ? toIndex : fromIndex;
+                    int smallerIndex =
+                        toIndex < fromIndex ? toIndex : fromIndex;
+                    //print('from$fromIndex to$toIndex');
                     setState(() {
                       diaryList.insert(
                           smallerIndex, diaryList.removeAt(largerIndex));
@@ -209,57 +214,82 @@ class DiaryGridItem extends StatefulWidget {
 }
 
 class _DiaryGridItemState extends State<DiaryGridItem> {
-  int _maxSimultaneousDrags = 1;
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Draggable(
-          data: widget.listIndex,
-          maxSimultaneousDrags: _maxSimultaneousDrags,
-          child: Material(
-              child: InkWell(
-            child: diaryCover(context, widget.listIndex),
-            onLongPress: () {
-              setState(() {
-                _maxSimultaneousDrags = 1;
-                diaryList.elementAt(widget.listIndex)['bookmarked'] =
-                    !diaryList.elementAt(widget.listIndex)['bookmarked'];
-              });
-            },
-          )),
-          feedback: Material(
-              child: InkWell(
-            child: diaryCover(context, widget.listIndex),
-            onLongPress: () {
-              setState(() {
-                _maxSimultaneousDrags = 1;
-              });
-            },
-          )),
-          childWhenDragging: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.21,
-            height: MediaQuery.of(context).size.width * 0.28,
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-                child: Text(
-              diaryList.elementAt(widget.listIndex)['title'],
-              softWrap: false,
-              overflow: TextOverflow.clip,
-            )),
-            diaryMenuButton(20)
-          ],
-        )
+        widget.listIndex == -1
+            ? Material(
+                child: InkWell(
+                child: addDiaryButton(context),
+              ))
+            : Draggable(
+                data: widget.listIndex,
+                maxSimultaneousDrags: widget.listIndex == -1 ? 0 : 1,
+                child: Material(
+                    child: InkWell(
+                  child: diaryCover(context, widget.listIndex),
+                  onLongPress: () {
+                    setState(() {
+                      diaryList.elementAt(widget.listIndex)['bookmarked'] =
+                          !diaryList.elementAt(widget.listIndex)['bookmarked'];
+                    });
+                  },
+                  onTap: () {
+                    passwordCheck(context, widget.listIndex, diaryList);
+                  },
+                )),
+                feedback: Material(
+                    child: InkWell(
+                  child: diaryCover(context, widget.listIndex),
+                )),
+                childWhenDragging: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.21,
+                  height: MediaQuery.of(context).size.width * 0.28,
+                ),
+              ),
+        widget.listIndex != -1
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                      child: Text(
+                    diaryList.elementAt(widget.listIndex)['title'],
+                    softWrap: false,
+                    overflow: TextOverflow.clip,
+                  )),
+                  diaryMenuButton(20)
+                ],
+              )
+            : const SizedBox(),
       ],
     );
   }
+}
+
+Widget addDiaryButton(context) {
+  return Material(
+      child: InkWell(
+    child: Container(
+      width: MediaQuery.of(context).size.width * 0.21,
+      height: MediaQuery.of(context).size.width * 0.28,
+      decoration: BoxDecoration(
+        color: Color(0xffdfdada),
+      ),
+      child: const Icon(
+        Icons.add_rounded,
+        size: 50,
+        color: Color(0x88000000),
+      ),
+    ),
+    onTap: () {
+      Navigator.push(
+          context, MaterialPageRoute(builder: ((context) => DiaryCreateNew())));
+    },
+  ));
 }
 
 Widget diaryCover(context, int index) {
@@ -270,6 +300,13 @@ Widget diaryCover(context, int index) {
     alignment: Alignment.bottomRight,
     padding: EdgeInsets.all(4),
     decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 5.0,
+              spreadRadius: 0,
+              offset: Offset(0, 3))
+        ],
         image: DecorationImage(
             image: AssetImage(diaryList.elementAt(index)['image'] ??
                 'assets/images/coverImages/default.png'))),

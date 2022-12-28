@@ -1,3 +1,4 @@
+import 'package:diory_project/attach_sticker.dart';
 import 'package:diory_project/write_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -103,7 +104,6 @@ class MyEditPageState extends State<MyEditPage> {
         //animatedIcon: AnimatedIcons.menu_close, -> 기본아이콘이 햄버거로 정해져있음.
 
         children: [
-          SpeedDialChild(child: Icon(Icons.arrow_downward), label: 'return'),
           SpeedDialChild(child: Icon(Icons.text_fields), label: 'font change'),
           SpeedDialChild(
             child: Icon(Icons.edit),
@@ -112,14 +112,27 @@ class MyEditPageState extends State<MyEditPage> {
               addText();
             },
           ),
-          SpeedDialChild(child: Icon(Icons.emoji_emotions), label: 'sticker'),
+          SpeedDialChild(
+            child: Icon(Icons.emoji_emotions),
+            label: 'sticker',
+            onTap: () {
+              addSticker();
+            },
+          ),
           SpeedDialChild(
               child: Icon(Icons.add_photo_alternate), label: 'gallery'),
           SpeedDialChild(
             child: Icon(Icons.delete),
             label: 'delete',
             onTap: () {
-              deleteText();
+              clear();
+            },
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.undo),
+            label: 'undo',
+            onTap: () {
+              undo();
             },
           ),
         ],
@@ -164,10 +177,19 @@ class MyEditPageState extends State<MyEditPage> {
               children: <Widget>[
                 TextField(
                   controller: _textEditingController,
-                )
+                  keyboardType: TextInputType.multiline,
+                  minLines: 1,
+                  maxLines: null,
+                ),
               ],
             ),
             actions: <Widget>[
+              TextButton(
+                child: Text("취소"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
               TextButton(
                 child: Text("입력"),
                 onPressed: () {
@@ -178,12 +200,6 @@ class MyEditPageState extends State<MyEditPage> {
                       _items.add(writetext);
                     });
                   }
-                  Navigator.pop(context);
-                },
-              ),
-              TextButton(
-                child: Text("취소"),
-                onPressed: () {
                   Navigator.pop(context);
                 },
               ),

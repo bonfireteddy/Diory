@@ -70,6 +70,7 @@ class _WriteTextState extends State<WriteText> {
               onLongPress: () => showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
+
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0)),
                         title: Column(
@@ -105,7 +106,20 @@ class _WriteTextState extends State<WriteText> {
                               });
                             },
                           ),
-                        ]),
+                        ],
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text("확인"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            setState(() {
+                              widget.text = _textController.text;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                   )),
         ),
       ],
