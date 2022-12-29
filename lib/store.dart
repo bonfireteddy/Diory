@@ -56,4 +56,18 @@ class Store {
     }
     ItemController.items = pageItems;
   }
+
+  static void getDiaryPages() {
+    String diaryId = "GrZSSShpj3vLvLstKT3R";
+    var pages = [];
+    db.collection("Diarys").doc(diaryId).get().then((d) {
+      for (var page in d["pages"]) {
+        for (var component in page["components"]) {
+          pages.add(component);
+        }
+      }
+      currentDiaryInfo["pages"] = pages;
+      print(currentDiaryInfo["pages"]);
+    });
+  }
 }
