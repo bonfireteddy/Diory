@@ -9,7 +9,7 @@ var db = FirebaseFirestore.instance;
 
 class Store {
   static String userId = "YE7Fz6e0BfT6qHqujFuwhZByL5m2";
-  static String currentDiaryId = "GrZSSShpj3vLvLstKT3R";
+  static String currentDiaryId = "edyDuhGPSK7pHvsJOms1";
   static Map<String, dynamic> currentDiaryInfo = {"title": "", "pages": []};
 
   static Map<int, dynamic> temp = {};

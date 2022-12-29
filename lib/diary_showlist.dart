@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diory_project/diary_setting.dart';
 import 'package:diory_project/diary_readingview.dart';
+import 'package:diory_project/edit_page.dart';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
 
@@ -199,6 +200,8 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
                     });
                   },
                   onTap: () {
+                    ItemController.stickerItems = [];
+                    ItemController.textItems = [];
                     passwordCheck(context, widget.data, DiaryReadingView());
                   },
                 )),
