@@ -1,6 +1,7 @@
 import 'package:diory_project/diary_showlist.dart';
 import 'package:diory_project/edit_page.dart';
 import 'package:diory_project/selectTemplate.dart';
+import 'package:diory_project/store.dart';
 import 'package:flutter/material.dart';
 
 import 'store.dart';
@@ -29,6 +30,7 @@ class _DiaryPageViewState extends State<DiaryPageView> {
     _pageList = Store.currentDiaryInfo['pages'];
     print('페이지 길이${_pageList.length}');
     print(_pageList);
+
     _currentPageIndex = _currentPageIndex ?? _pageList.length - 1;
     PageController _pageController =
         PageController(initialPage: _currentPageIndex!);
@@ -85,6 +87,8 @@ class _DiaryPageViewState extends State<DiaryPageView> {
                     constraints: const BoxConstraints(),
                     padding: EdgeInsets.zero,
                     onPressed: () {
+                      Store.drawPage(Store.currentDiaryInfo,
+                          (_currentPageIndex! > 0) ? _currentPageIndex : 0);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -97,6 +101,8 @@ class _DiaryPageViewState extends State<DiaryPageView> {
           actions: [
             IconButton(
                 onPressed: () {
+                  ItemController.stickerItems = [];
+                  ItemController.textItems = [];
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -121,7 +127,8 @@ class _DiaryPageViewState extends State<DiaryPageView> {
                     child: _pageList.isNotEmpty
                         ? PageView.builder(
                             controller: _pageController,
-                            itemCount: _pageList.length,
+                            // itemCount: _pageList.length,
+                            itemCount: ItemController.pages.length,
                             itemBuilder: (context, index) {
                               return Container(
                                 color: Colors.blue,
@@ -131,10 +138,7 @@ class _DiaryPageViewState extends State<DiaryPageView> {
                                 height:
                                     MediaQuery.of(context).size.width * 0.80 +
                                         20,
-                                child: Text(
-                                  '$index',
-                                  style: TextStyle(fontSize: 100),
-                                ),
+                                child: ItemController.pages[index],
                               );
                             },
                             onPageChanged: (value) {

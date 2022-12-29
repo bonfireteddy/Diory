@@ -47,8 +47,8 @@ class _WriteTextState extends State<WriteText> {
 
   @override
   Widget build(BuildContext context) {
-    MyEditPageState parent =
-        context.findAncestorStateOfType<MyEditPageState>()!;
+    MyEditPageState? parent =
+        context.findAncestorStateOfType<MyEditPageState>();
 
     return Stack(
       children: <Widget>[
@@ -101,7 +101,7 @@ class _WriteTextState extends State<WriteText> {
                               Navigator.of(context).pop();
                               ItemController.update(
                                   widget.id, _textController.text);
-                              parent.setState(() {});
+                              parent?.setState(() {});
                               setState(() {
                                 widget.text = _textController.text;
                               });
@@ -115,7 +115,7 @@ class _WriteTextState extends State<WriteText> {
                             onPressed: () {
                               Navigator.of(context).pop();
                               ItemController.delete(widget.id);
-                              parent.setState(() {});
+                              parent?.setState(() {});
                             },
                           ),
                         ]),

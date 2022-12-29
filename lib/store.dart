@@ -11,7 +11,7 @@ var db = FirebaseFirestore.instance;
 
 class Store {
   static String userId = "YE7Fz6e0BfT6qHqujFuwhZByL5m2";
-  static String currentDiaryId = "GrZSSShpj3vLvLstKT3R";
+  static String currentDiaryId = "edyDuhGPSK7pHvsJOms1";
   static Map<String, dynamic> currentDiaryInfo = {"title": "", "pages": []};
 
   static Map<int, dynamic> temp = {};
@@ -37,40 +37,36 @@ class Store {
   static Future getPost() async {
     var data = await db.collection("Diarys").doc(currentDiaryId).get();
     currentDiaryInfo["pages"] = data["pages"];
-    drawPage(data);
+    drawPage(data, 0);
   }
 
-  /* 데이터베이스에서 페이지 정보 불러옴 */
-  static void drawPage(DocumentSnapshot<Map<String, dynamic>> data) {
+  static void drawPage(data, pageIdx) {
     List<WriteText> textItems = [];
-    List<Sticker> stickerItems = [];
+    List<UISticker> stickerItems = [];
     int i = 0;
     if (data["pages"].length == 0) {
       ItemController.textItems = [];
       ItemController.stickerItems = [];
       return;
     }
-    for (var page in data["pages"][0]["components"]) {
+    for (var page in data["pages"][pageIdx]["components"]) {
       if (page["type"] == "Text") {
         textItems.add(WriteText(
             id: i++, text: page["text"], dx: page["x"], dy: page["y"]));
       } else if (page["type"] == "Sticker") {
-        stickerItems.add(Sticker(
-            id: i++,
-            uiSticker: (UISticker(
-                imageProvider: AssetImage(page["stickerId"]),
-                x: page["x"],
-                y: page["y"],
-                size: page["size"],
-                angle: page["angle"],
-                editable: false))));
+        stickerItems.add(UISticker(
+            imageProvider: AssetImage(page["stickerId"]),
+            x: page["x"],
+            y: page["y"],
+            size: page["size"],
+            angle: page["angle"],
+            editable: false));
       }
     }
     ItemController.textItems = textItems;
     ItemController.stickerItems = stickerItems;
   }
 
-  /* 데이터베이스에서 다이어리의 모든 페이지 정보 불러옴 -> 현재님이 다 했을 때 homepage.dart와 연결할 것 */
   static void getDiaryPages() {
     db.collection("Diarys").doc(currentDiaryId).get().then((d) {
       currentDiaryInfo["title"] = d["title"];
