@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'diary_showlist.dart';
 import 'account_setprofile.dart';
+import 'store.dart';
 
 final FirebaseAuth userInfo = FirebaseAuth.instance;
 var nickname;
@@ -128,6 +129,8 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                 data['id'] = document.id;
                 return data;
               })
+              .where(
+                  (element) => element['userId'] == userInfo.currentUser!.uid)
               .where((element) => element['bookmarked'])
               .toList();
           print(_currentPageIndex.value);
