@@ -4,6 +4,8 @@ import 'package:diory_project/selectTemplate.dart';
 import 'package:diory_project/store.dart';
 import 'package:flutter/material.dart';
 
+import 'store.dart';
+
 class DiaryReadingView extends StatelessWidget {
   const DiaryReadingView({super.key});
 
@@ -24,7 +26,11 @@ class _DiaryPageViewState extends State<DiaryPageView> {
   List _pageList = [];
   @override
   Widget build(BuildContext context) {
-    _pageList = Store.currentDiaryInfo["pages"];
+    Store.getDiaryPages();
+    _pageList = Store.currentDiaryInfo['pages'];
+    print('페이지 길이${_pageList.length}');
+    print(_pageList);
+
     _currentPageIndex = _currentPageIndex ?? _pageList.length - 1;
     PageController _pageController =
         PageController(initialPage: _currentPageIndex!);
@@ -34,7 +40,7 @@ class _DiaryPageViewState extends State<DiaryPageView> {
           title: Row(children: [
             Expanded(
                 child: Text(
-              'store id로 제목 가져와야함\t\t',
+              '${Store.currentDiaryInfo['title']}\t\t',
               overflow: TextOverflow.fade,
             )),
             Visibility(

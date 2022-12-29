@@ -80,7 +80,7 @@ class _ListGridViewState extends State<ListGridView> {
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('TempDiarys')
+            .collection('Diarys')
             .orderBy('index')
             .snapshots(),
         builder: (BuildContext context, snapshot) {
@@ -142,11 +142,11 @@ class _ListGridViewState extends State<ListGridView> {
                                   "from $fromIndex $fromId to $toIndex $toId");
 
                               FirebaseFirestore.instance
-                                  .collection("TempDiarys")
+                                  .collection("Diarys")
                                   .doc(fromId)
                                   .update({'index': toIndex});
                               FirebaseFirestore.instance
-                                  .collection("TempDiarys")
+                                  .collection("Diarys")
                                   .doc(toId)
                                   .update({'index': fromIndex});
                             },
@@ -190,7 +190,7 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
                     setState(() {
                       print(widget.data!['id']);
                       FirebaseFirestore.instance
-                          .collection('TempDiarys')
+                          .collection('Diarys')
                           .doc(widget.data!['id'])
                           .update({'bookmarked': !widget.data!['bookmarked']});
                       widget.data!['bookmarked'] = !widget.data!['bookmarked'];
@@ -246,6 +246,14 @@ Widget addDiaryButton(context) {
       ),
     ),
     onTap: () {
+      /*db.collection("TempDiarys").get().then((res) {
+        print(res.docs);
+        res.docs.forEach((element) {
+          db.collection("Diarys").add(element.data());
+        });
+      });
+    */
+
       Navigator.push(
           context, MaterialPageRoute(builder: ((context) => DiaryCreateNew())));
     },

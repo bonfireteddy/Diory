@@ -173,10 +173,7 @@ class MyEditPageState extends State<MyEditPage> {
               },
               icon: const Icon(Icons.check)),
           IconButton(
-              onPressed: () {
-                Store.createNewDiary();
-              },
-              icon: const Icon(Icons.create_new_folder))
+              onPressed: () {}, icon: const Icon(Icons.create_new_folder))
         ],
       ),
       body: Stack(children: [
