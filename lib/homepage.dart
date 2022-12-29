@@ -1,11 +1,13 @@
 import 'package:diory_project/diary_setting.dart';
 import 'package:diory_project/diary_readingview.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'diary_showlist.dart';
 import 'account_setprofile.dart';
 
 final bookmarkedDiaryList = diaryList;
+final FirebaseAuth userInfo = FirebaseAuth.instance;
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -209,7 +211,15 @@ class DrawerMenuBar extends StatefulWidget {
 }
 
 class _DrawerMenuBarState extends State<DrawerMenuBar> {
-  final String alias = '오리너구리'; //사용자 별명
+  Future signOut() async {
+    try {
+      return await FirebaseAuth.instance.signOut();
+    } catch(e) {
+      print(e);
+    }
+  }
+  //final String alias = '오리너구리'; //사용자 별명
+  String? alias = userInfo.currentUser!.email;
   final String accountImageUrl =
       'assets/images/account_icon_image.png'; //프로필 사진 주소
   @override
@@ -231,7 +241,7 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
                       },
                     )),
             Text(
-              '\t$alias님',
+              '$alias님',  // 닉네임이 아니라 이메일로 나옴->수정필요
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
             ),
             const Expanded(child: SizedBox()),
@@ -287,39 +297,26 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
             color: Color(0xffFCD2D2)),
         const ListTile(
           leading: Icon(
-            Icons.logout,
+            Icons.account_box,
             color: Colors.black,
           ),
-          title: Text('로그아웃', style: TextStyle(fontSize: 16)),
+          title: Text('계정 관리', style: TextStyle(fontSize: 16)),
           onTap: null,
         ),
-        const Divider(
-            height: 20,
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 30,
-            color: Color(0xffFCD2D2)),
-        const Divider(
-            height: 20,
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 30,
-            color: Color(0xffFCD2D2)),
-        const ListTile(
-          leading: Icon(
-            Icons.storefront,
-            color: Colors.black,
+        Container(  // 로그아웃 기능
+          width: 60,
+          height: 100,
+          alignment: Alignment.bottomCenter,
+          child: TextButton(
+              style: TextButton.styleFrom(primary: Colors.grey),
+              child: Text('Logout'),
+              onPressed: () {
+                signOut();
+                Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+              }
           ),
-          title: Text('템플릿 스토어', style: TextStyle(fontSize: 16)),
-          onTap: null,
         ),
-        const Divider(
-            height: 20,
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 30,
-            color: Color(0xffFCD2D2)),
-      ]),
+    ]),
     );
   }
 }
