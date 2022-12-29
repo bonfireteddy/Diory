@@ -90,7 +90,7 @@ class MyEditPageState extends State<MyEditPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar
+      appBar: AppBar(
         toolbarHeight: 60,
         title: Text('${widget.pageIndex == -1 ? 'new page' : 'edit page'}'),
         centerTitle: true,
