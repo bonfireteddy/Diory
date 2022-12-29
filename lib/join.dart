@@ -148,6 +148,7 @@ class _JoinPageState extends State<JoinPage> {
         await FirebaseFirestore.instance.collection('Users').doc(r.user!.uid).set({
           'email': r.user!.email,
           'username' : null,
+          'profileImg' : null,
         });
 
         await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -168,12 +169,12 @@ class _JoinPageState extends State<JoinPage> {
     }
   }
 }
-
+/*
 class DatabaseService {
   final String? uid;
   DatabaseService({this.uid});
 
-// users collection을 변수로 만들어줄게요.
+// users collection을 변수로
   final CollectionReference userCollection =
   FirebaseFirestore.instance.collection('users');
 
@@ -189,3 +190,4 @@ class DatabaseService {
     });
   }
 }
+ */
