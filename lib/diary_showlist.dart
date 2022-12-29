@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diory_project/diary_setting.dart';
 import 'package:diory_project/diary_readingview.dart';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
+import 'store.dart';
 
 class DiaryShowList extends StatelessWidget {
   const DiaryShowList({super.key});
@@ -88,6 +91,16 @@ class _ListGridViewState extends State<ListGridView> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             //return Text("...");
           }
+          Iterable datas = snapshot.hasData
+              ? snapshot.data!.docs.map((DocumentSnapshot document) {
+                  Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
+                  data['id'] = document.id;
+                  return data;
+                }).where(
+                  (element) => element['userId'] == userInfo.currentUser!.uid)
+              : Iterable.empty();
+
           return GridView(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
@@ -103,67 +116,47 @@ class _ListGridViewState extends State<ListGridView> {
                   )
                 ] +
                 (snapshot.data != null
-                    ? (snapshot.data!.docs.map((DocumentSnapshot document) {
-                        Map<String, dynamic> data =
-                            document.data()! as Map<String, dynamic>;
-                        data['id'] = document.id;
-                        return DragTarget(
-                          builder: (context, candidateData, rejectedData) =>
-                              Container(
-                            child: DiaryGridItem(data: data),
-                          ),
-                          onWillAccept: (objectData) =>
-                              int.parse(objectData.toString()) != -1,
-                          onAccept: (objectData) {
-                            int fromIndex =
-                                int.tryParse(objectData.toString()) ?? -1;
-                            int toIndex = data['index'];
-                            if (toIndex == -1 || toIndex == fromIndex) return;
-                            int largerIndex =
-                                toIndex > fromIndex ? toIndex : fromIndex;
-                            int smallerIndex =
-                                toIndex < fromIndex ? toIndex : fromIndex;
-                            print("from $fromIndex to $toIndex");
-                            setState(() {
-                              /*diaryList.insert(smallerIndex,
-                                  diaryList.removeAt(largerIndex));
-                              diaryList.insert(largerIndex,
-                                  diaryList.removeAt(smallerIndex + 1));*/
-                            });
-                          },
-                        );
-                      }).toList())
+                    ? (datas
+                        .map((data) {
+                          return DragTarget(
+                            builder: (context, candidateData, rejectedData) =>
+                                Container(
+                              child: DiaryGridItem(data: data),
+                            ),
+                            onWillAccept: (objectData) =>
+                                jsonDecode(
+                                    objectData.toString())['listIndex'] !=
+                                -1,
+                            onAccept: (objectData) {
+                              int fromIndex = jsonDecode(
+                                      objectData.toString())['listIndex'] ??
+                                  -1;
+
+                              int toIndex = data['index'];
+                              if (toIndex == -1 || toIndex == fromIndex) return;
+                              String fromId =
+                                  jsonDecode(objectData.toString())['data']
+                                      ['id'];
+                              String toId = data['id'];
+                              print(
+                                  "from $fromIndex $fromId to $toIndex $toId");
+
+                              FirebaseFirestore.instance
+                                  .collection("TempDiarys")
+                                  .doc(fromId)
+                                  .update({'index': toIndex});
+                              FirebaseFirestore.instance
+                                  .collection("TempDiarys")
+                                  .doc(toId)
+                                  .update({'index': fromIndex});
+                            },
+                          );
+                        })
+                        .where((element) => element != null)
+                        .toList())
                     : []),
           );
         });
-    /*return Container(
-        child: GridView.builder(
-            itemCount: diaryList.length + 1,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 3 / 4,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10),
-            itemBuilder: (context, index) => DragTarget(
-                  builder: (context, candidateData, rejectedData) => Container(
-                    child: DiaryGridItem(listIndex: index - 1),
-                  ),
-                  onWillAccept: (data) => int.parse(data.toString()) != -1,
-                  onAccept: (data) {
-                    int fromIndex = int.tryParse(data.toString()) ?? -1;
-                    int toIndex = index - 1;
-                    if (toIndex == -1 || toIndex == fromIndex) return;
-                    int largerIndex = toIndex > fromIndex ? toIndex : fromIndex;
-                    int smallerIndex =
-                        toIndex < fromIndex ? toIndex : fromIndex;
-                    setState(() {
-                      diaryList.insert(
-                          smallerIndex, diaryList.removeAt(largerIndex));
-                      diaryList.insert(
-                          largerIndex, diaryList.removeAt(smallerIndex + 1));
-                    });
-                  },
-                )));*/
   }
 }
 
@@ -188,17 +181,23 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
                 child: addDiaryButton(context),
               ))
             : Draggable(
-                data: listIndex,
+                data: jsonEncode({'listIndex': listIndex, 'data': widget.data}),
                 maxSimultaneousDrags: listIndex == -1 ? 0 : 1,
                 child: Material(
                     child: InkWell(
                   child: diaryCover(context, widget.data),
                   onLongPress: () {
                     setState(() {
+                      print(widget.data!['id']);
+                      FirebaseFirestore.instance
+                          .collection('TempDiarys')
+                          .doc(widget.data!['id'])
+                          .update({'bookmarked': !widget.data!['bookmarked']});
                       widget.data!['bookmarked'] = !widget.data!['bookmarked'];
                     });
                   },
                   onTap: () {
+                    Store.currentDiaryId = widget.data!['id'];
                     passwordCheck(context, widget.data, DiaryReadingView());
                   },
                 )),

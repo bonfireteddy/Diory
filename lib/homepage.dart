@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diory_project/diary_setting.dart';
 import 'package:diory_project/diary_readingview.dart';
+import 'package:diory_project/edit_page.dart';
+import 'package:diory_project/store.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'diary_showlist.dart';
 import 'account_setprofile.dart';
+import 'store.dart';
 
 final FirebaseAuth userInfo = FirebaseAuth.instance;
 var nickname;
@@ -40,13 +43,14 @@ class MyHomePage extends StatelessWidget {
                           .collection('Users')
                           .snapshots()
                           .listen((event) {
-                            for(int i=0; i<event.size; i++) {
-                              if(event.docs[i]['email'] == userInfo.currentUser!.email) {
-                                nickname = event.docs[i]['username'];
-                                break;
-                              }
-                            }
-                            Scaffold.of(context).openEndDrawer();
+                        for (int i = 0; i < event.size; i++) {
+                          if (event.docs[i]['email'] ==
+                              userInfo.currentUser!.email) {
+                            nickname = event.docs[i]['username'];
+                            break;
+                          }
+                        }
+                        Scaffold.of(context).openEndDrawer();
                       });
                     },
                   )),
@@ -134,6 +138,8 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                 data['id'] = document.id;
                 return data;
               })
+              .where(
+                  (element) => element['userId'] == userInfo.currentUser!.uid)
               .where((element) => element['bookmarked'])
               .toList();
           print(_currentPageIndex.value);
@@ -176,6 +182,8 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                                               'assets/images/coverImages/default.png'))),
                                 ),
                                 onTap: () {
+                                  // Store.currentDiaryId = bookmarkedDiaryList.elementAt(index)";
+                                  ItemController.setPages();
                                   passwordCheck(
                                       context,
                                       bookmarkedDiaryList.elementAt(index),
@@ -284,7 +292,7 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
   Future signOut() async {
     try {
       return await FirebaseAuth.instance.signOut();
-    } catch(e) {
+    } catch (e) {
       print(e);
     }
   }
@@ -369,7 +377,8 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
           title: Text('나의 템플릿 관리', style: TextStyle(fontSize: 16)),
           onTap: null,
         ),
-        Container(  // 로그아웃 기능
+        Container(
+          // 로그아웃 기능
           width: 60,
           height: 100,
           alignment: Alignment.bottomCenter,
@@ -379,11 +388,11 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
               onPressed: () {
                 //storage.delete(key: "login");
                 signOut();
-                Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-              }
-          ),
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/', (route) => false);
+              }),
         ),
-    ]),
+      ]),
     );
   }
 }

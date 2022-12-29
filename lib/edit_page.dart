@@ -2,6 +2,7 @@ import 'package:diory_project/stickerCollection.dart';
 import 'package:diory_project/write_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_stickers/image_stickers.dart';
 import 'package:image_stickers/image_stickers_controls_style.dart';
 import 'store.dart';
@@ -11,6 +12,49 @@ class ItemController {
   static int id = 0;
   static List<WriteText> textItems = <WriteText>[];
   static List<UISticker> stickerItems = <UISticker>[];
+
+  static List<Stack> pages = <Stack>[];
+
+  static Future setPages() async {
+    pages = <Stack>[];
+    int i = 0;
+    await Store.getPost();
+    for (var data in Store.currentDiaryInfo["pages"]) {
+      List<WriteText> textItems = <WriteText>[];
+      List<UISticker> stickerItems = <UISticker>[];
+      if (data["components"].length > 0) {
+        for (var page in data["components"]) {
+          print(page);
+          if (page["type"] == "Text") {
+            textItems.add(WriteText(
+                id: i++, text: page["text"], dx: page["x"], dy: page["y"]));
+          } else if (page["type"] == "Sticker") {
+            stickerItems.add(UISticker(
+                imageProvider: AssetImage(page["stickerId"]),
+                x: page["x"],
+                y: page["y"],
+                size: page["size"],
+                angle: page["angle"],
+                editable: false));
+          }
+        }
+      }
+
+      pages.add(Stack(children: [
+        ImageStickers(
+          backgroundImage: const AssetImage("assets/stickers/white_page.png"),
+          stickerList: stickerItems,
+          stickerControlsStyle: ImageStickersControlsStyle(
+              color: Colors.blueGrey,
+              child: const Icon(
+                Icons.zoom_out_map,
+                color: Colors.white,
+              )),
+        ),
+        for (var item in textItems) item,
+      ]));
+    }
+  }
 
   static void update(int id, String text) {
     int index = textItems.indexWhere((item) => item.id == id);
@@ -100,7 +144,15 @@ class MyEditPageState extends State<MyEditPage> {
 
         actions: [
           IconButton(
-              onPressed: () => ItemController.setPage(0),
+              onPressed: () {
+                print("Now Page : ${widget.pageIndex}");
+                if (widget.pageIndex == -1) {
+                  ItemController.setPage(ItemController.pages.length);
+                } else {
+                  ItemController.setPage(widget.pageIndex);
+                }
+                ItemController.setPages();
+              },
               icon: const Icon(Icons.save)),
           IconButton(
               onPressed: () async {
@@ -109,7 +161,8 @@ class MyEditPageState extends State<MyEditPage> {
               },
               icon: const Icon(Icons.refresh)),
           IconButton(
-              onPressed: () {
+              onPressed: () async {
+                await ItemController.setPages();
                 bool state = (ItemController.stickerItems.length > 0)
                     ? ItemController.stickerItems[0].editable
                     : true;
@@ -144,6 +197,8 @@ class MyEditPageState extends State<MyEditPage> {
         activeIcon: Icons.close,
         overlayColor: Colors.grey,
         overlayOpacity: 0.5,
+        switchLabelPosition: true,
+        closeManually: true,
         //animatedIcon: AnimatedIcons.menu_close, -> 기본아이콘이 햄버거로 정해져있음.
 
         children: [
@@ -164,6 +219,7 @@ class MyEditPageState extends State<MyEditPage> {
           ),
           SpeedDialChild(
             child: Icon(Icons.undo),
+            visible: true,
             label: 'undo',
             onTap: () {
               undo();
@@ -290,8 +346,12 @@ class MyEditPageState extends State<MyEditPage> {
   }
 
   void undo() {
+    List<UISticker> sticker_Items = ItemController.stickerItems;
     setState(() {
-      if (!_items.isEmpty) _items.removeAt(_items.length - 1);
+      // ()안이 items에 요소가 비어있지 않을때만, 리스트에서 삭제한다.
+      if (sticker_Items.isNotEmpty) {
+        sticker_Items.removeAt(sticker_Items.length - 1);
+      }
     });
   }
 }
