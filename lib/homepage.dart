@@ -346,7 +346,6 @@ Widget diaryMenuButton(context, double size, int index) {
                 '다이어리 삭제',
                 style: TextStyle(color: Colors.red),
               ),
-              onTap: null,
             ),
           ]),
       onSelected: (value) {
@@ -356,6 +355,34 @@ Widget diaryMenuButton(context, double size, int index) {
                 context, index, diaryList, EditDiarySetting(index: index));
             break;
           case 1:
+            showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                        icon: Icon(
+                          Icons.warning,
+                          color: Colors.red,
+                          size: 50,
+                        ),
+                        content: Text(
+                          '정말로....\n${bookmarkedDiaryList.elementAt(index)['title']} 다이어리를\n영원히 삭제할까요....?',
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              backgroundColor: Colors.yellow),
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                //데이터베이스에서 다이어리 삭제하기
+                                Navigator.pop(context);
+                              },
+                              child: const Text('그러세요')),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('아직좀더생각해봄'))
+                        ]));
             break;
         }
       },
