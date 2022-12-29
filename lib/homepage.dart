@@ -289,20 +289,6 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
           title: Text('나의 템플릿 관리', style: TextStyle(fontSize: 16)),
           onTap: null,
         ),
-        const Divider(
-            height: 20,
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 30,
-            color: Color(0xffFCD2D2)),
-        const ListTile(
-          leading: Icon(
-            Icons.account_box,
-            color: Colors.black,
-          ),
-          title: Text('계정 관리', style: TextStyle(fontSize: 16)),
-          onTap: null,
-        ),
         Container(  // 로그아웃 기능
           width: 60,
           height: 100,
