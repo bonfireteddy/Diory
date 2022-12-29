@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -5,7 +7,7 @@ var db = FirebaseFirestore.instance;
 
 class Store {
   static String token = "";
-  static String userId = "";
+  static String userId = "BWBe0HQ2h50rhCCGtW9J";
 
   static String currentDiaryId = "";
   static var currentDiaryInfo = {
@@ -47,7 +49,7 @@ class Store {
 
   static void getDiaryPages() {
     String diaryId = "GrZSSShpj3vLvLstKT3R";
-    var pages = [];
+    var pages = []; // 하나의 다이어리의 모든 페이지
     db.collection("Diarys").doc(diaryId).get().then((d) {
       for (var page in d["pages"]) {
         for (var component in page["components"]) {
@@ -56,6 +58,16 @@ class Store {
       }
       currentDiaryInfo["pages"] = pages;
       print(currentDiaryInfo["pages"]);
+    });
+  }
+
+  static void createNewDiary() {
+    currentDiaryInfo["userid"] = userId;
+    db.collection("Diarys").add(currentDiaryInfo).then((value) {
+      token = value.id;
+      db.collection("Users").doc(userId).update({
+        "diarys": FieldValue.arrayUnion([token])
+      });
     });
   }
 }
