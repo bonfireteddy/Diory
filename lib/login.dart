@@ -12,13 +12,14 @@ class Login extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+        if (true) {
+          //if (!snapshot.hasData)
           return SignInScreen(
             providerConfigs: const [
               EmailProviderConfiguration(),
               GoogleProviderConfiguration(
                   clientId:
-                  '963656261848-v7r3vq1v6haupv0l1mdrmsf56ktnua60.apps.googleusercontent.com'),
+                      '963656261848-v7r3vq1v6haupv0l1mdrmsf56ktnua60.apps.googleusercontent.com'),
             ],
             subtitleBuilder: (context, action) {
               return Padding(
@@ -30,7 +31,7 @@ class Login extends StatelessWidget {
             },
           );
         }
-
+        print(snapshot);
         return const MyHomePage();
       },
     );

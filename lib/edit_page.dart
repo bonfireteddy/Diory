@@ -1,9 +1,45 @@
-import 'package:diory_project/attach_sticker.dart';
 import 'package:diory_project/write_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_stickers/image_stickers.dart';
 import 'package:image_stickers/image_stickers_controls_style.dart';
+import 'store.dart';
+
+class ItemController {
+  static int id = 0;
+  static List<WriteText> items = <WriteText>[];
+  static void reload() {}
+  static void add(WriteText item) {
+    items.add(item);
+  }
+
+  static void update(int id, String text) {
+    int index = items.indexWhere((item) => item.id == id);
+    if (index < 0) return;
+    items[index].text = text;
+  }
+
+  static void delete(int id) {
+    items.removeWhere((item) => item.id == id);
+  }
+
+  static void setPage(int idx) {
+    var pageData = {"idx": idx, "components": []};
+    var temp = [];
+    for (var item in ItemController.items) {
+      temp.add({
+        "type": "Text",
+        "text": item.text,
+        "x": item.dx,
+        "y": item.dy,
+      });
+    }
+    pageData["components"] = temp;
+    Store.setPage(idx, pageData);
+    Store.setDiary();
+    print(Store.currentDiaryInfo);
+  }
+}
 
 class EditPage extends StatelessWidget {
   const EditPage({Key? key}) : super(key: key);
@@ -28,13 +64,12 @@ class MyEditPage extends StatefulWidget {
   final String title;
 
   @override
-  State<MyEditPage> createState() => _MyEditPageState();
+  State<MyEditPage> createState() => MyEditPageState();
 }
 
 class _MyEditPageState extends State<MyEditPage> {
   final _items = <Widget>[];
   List<UISticker> stickers = [];
-
   @override
   void initState() {
     stickers.add(createSticker(0, "assets/stickers/Ribone.png"));
@@ -53,6 +88,7 @@ class _MyEditPageState extends State<MyEditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 60,
         title: Text(widget.title),
         centerTitle: true,
         // 중앙 정렬
@@ -71,13 +107,39 @@ class _MyEditPageState extends State<MyEditPage> {
             ),
           IconButton(
               onPressed: () {
+/*
+        actions: [
+          IconButton(
+              onPressed: () => ItemController.setPage(0),
+              icon: const Icon(Icons.save)),
+          IconButton(
+              onPressed: () async {
+                await Store.getPost();
+                setState(() {});
+              },
+              icon: const Icon(Icons.refresh))
+        ],
+      ),
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text('Drawer Header'),
+            ),
+            ListTile(
+              title: const Text('Item1'),
+              onTap: () {
+*/
                 Navigator.pop(context);
               },
               icon: Icon(Icons.check))
         ],
 
       ),
-
 
       body: Column(
         children: [
@@ -100,6 +162,7 @@ class _MyEditPageState extends State<MyEditPage> {
           for (var item in _items) item
         ],
       ),
+      //body: Stack(children: [for (var item in ItemController.items) item]),
 
       // ---------------------------------------------------------
 
@@ -111,9 +174,8 @@ class _MyEditPageState extends State<MyEditPage> {
         //animatedIcon: AnimatedIcons.menu_close, -> 기본아이콘이 햄버거로 정해져있음.
 
         children: [
-          SpeedDialChild(child: Icon(Icons.text_fields), label: 'font change'),
           SpeedDialChild(
-            child: Icon(Icons.edit),
+            child: Icon(Icons.text_fields),
             label: 'text',
             onTap: () {
               addText();
@@ -144,9 +206,7 @@ class _MyEditPageState extends State<MyEditPage> {
           ),
         ],
       ),
-      // This trailing comma makes auto-formatting nicer for build methods.
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      // floatingActionButton의 위치 변경
     );
   }
 
@@ -181,31 +241,27 @@ class _MyEditPageState extends State<MyEditPage> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                TextField(
-                  controller: _textEditingController,
-                  keyboardType: TextInputType.multiline,
-                  minLines: 1,
-                  maxLines: null,
-                ),
-              ],
+              children: <Widget>[TextField(controller: _textEditingController)],
             ),
             actions: <Widget>[
               TextButton(
-                child: Text("취소"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              TextButton(
-                child: Text("입력"),
+                child: const Text("입력"),
                 onPressed: () {
                   _text = _textEditingController.text;
                   if (_text != '') {
                     setState(() {
-                      _items.add(WriteText(text: _text));
+                      var writetext =
+                          WriteText(id: ItemController.id, text: _text);
+                      ItemController.add(writetext);
+                      ItemController.id++;
                     });
                   }
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: const Text("취소"),
+                onPressed: () {
                   Navigator.pop(context);
                 },
               ),
