@@ -7,10 +7,16 @@ import 'package:image_stickers/image_stickers_controls_style.dart';
 import 'store.dart';
 import 'package:diory_project/stickerCollection.dart';
 
+class Sticker {
+  int id;
+  UISticker uiSticker;
+  Sticker({required this.id, required this.uiSticker});
+}
+
 class ItemController {
   static int id = 0;
   static List<WriteText> textItems = <WriteText>[];
-  static List<UISticker> stickerItems = <UISticker>[];
+  static List<Sticker> stickerItems = <Sticker>[];
 
   static List<Stack> pages = <Stack>[];
 
@@ -56,12 +62,12 @@ class ItemController {
     }
     for (var item in ItemController.stickerItems) {
       temp.add({
-        "stickerId": item.imageProvider.toString().split("\"")[1],
+        "stickerId": item.uiSticker.imageProvider.toString().split("\"")[1],
         "type": "Sticker",
-        "x": item.x,
-        "y": item.y,
-        "angle": item.angle,
-        "size": item.size
+        "x": item.uiSticker.x,
+        "y": item.uiSticker.y,
+        "angle": item.uiSticker.angle,
+        "size": item.uiSticker.size
       });
     }
 
@@ -131,11 +137,15 @@ class MyEditPageState extends State<MyEditPage> {
               icon: const Icon(Icons.refresh)),
           IconButton(
               onPressed: () {
-                bool state = (ItemController.stickerItems.length > 0)
-                    ? ItemController.stickerItems[0].editable
+                bool state = (ItemController.stickerItems
+                            .map((e) => e.uiSticker)
+                            .toList()
+                            .length >
+                        0)
+                    ? ItemController.stickerItems[0].uiSticker.editable
                     : true;
                 ItemController.stickerItems.forEach((sticker) {
-                  sticker.editable = !state;
+                  sticker.uiSticker.editable = !state;
                   setState(() {});
                 });
               },
@@ -150,7 +160,8 @@ class MyEditPageState extends State<MyEditPage> {
       body: Stack(children: [
         ImageStickers(
           backgroundImage: const AssetImage("assets/stickers/white_page.png"),
-          stickerList: ItemController.stickerItems,
+          stickerList:
+              ItemController.stickerItems.map((e) => e.uiSticker).toList(),
           stickerControlsStyle: ImageStickersControlsStyle(
               color: Colors.blueGrey,
               child: const Icon(
@@ -281,9 +292,11 @@ class MyEditPageState extends State<MyEditPage> {
                       InkWell(
                         onTap: () {
                           setState(() {
-                            ItemController.stickerItems.add(createSticker(
-                                ItemController.stickerItems.length,
-                                'assets/stickers/${index.toString()}.png'));
+                            ItemController.stickerItems.add(Sticker(
+                                id: ItemController.stickerItems.length,
+                                uiSticker: createSticker(
+                                    ItemController.stickerItems.length,
+                                    'assets/stickers/${index.toString()}.png')));
                           });
                         },
                         child: SizedBox(
