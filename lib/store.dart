@@ -10,14 +10,17 @@ var db = FirebaseFirestore.instance;
 class Store {
   static String token = "";
   static String userId = "BWBe0HQ2h50rhCCGtW9J";
-
   static String currentDiaryId = "";
+
   static var currentDiaryInfo = {
-    "id": currentDiaryId,
-    "userid": userId,
+    "title": "",
+    "coverid": 0,
     "pages": [],
+    "userid": userId,
+    "id": currentDiaryId,
+    "index": -1,
     "password": null,
-    "coverid": 0
+    "bookmarked": false
   };
 
   static Map<int, dynamic> temp = {};
@@ -49,28 +52,32 @@ class Store {
     drawPage(data);
   }
 
+  /* 데이터베이스에서 페이지 정보 불러옴 */
   static void drawPage(DocumentSnapshot<Map<String, dynamic>> data) {
     List<WriteText> textItems = [];
-    List<UISticker> stickerItems = [];
+    List<Sticker> stickerItems = [];
     int i = 0;
     for (var page in data["pages"][0]["components"]) {
       if (page["type"] == "Text") {
         textItems.add(WriteText(
             id: i++, text: page["text"], dx: page["x"], dy: page["y"]));
       } else if (page["type"] == "Sticker") {
-        stickerItems.add(UISticker(
-            imageProvider: AssetImage(page["stickerId"]),
-            x: page["x"],
-            y: page["y"],
-            size: page["size"],
-            angle: page["angle"],
-            editable: false));
+        stickerItems.add(Sticker(
+            id: i++,
+            uiSticker: (UISticker(
+                imageProvider: AssetImage(page["stickerId"]),
+                x: page["x"],
+                y: page["y"],
+                size: page["size"],
+                angle: page["angle"],
+                editable: false))));
       }
     }
     ItemController.textItems = textItems;
     ItemController.stickerItems = stickerItems;
   }
 
+  /* 데이터베이스에서 다이어리의 모든 페이지 정보 불러옴 -> 현재님이 다 했을 때 homepage.dart와 연결할 것 */
   static void getDiaryPages() {
     String diaryId = "GrZSSShpj3vLvLstKT3R";
     var pages = []; // 하나의 다이어리의 모든 페이지
@@ -85,7 +92,9 @@ class Store {
     });
   }
 
-  static void createNewDiary() {
+  /* 새로운 다이어리 생성 -> 현재님이 다 했을 때 homepage.dart와 연결할 것 */
+  static void createNewDiary(String title) {
+    currentDiaryInfo["title"] = title;
     currentDiaryInfo["userid"] = userId;
     db.collection("Diarys").add(currentDiaryInfo).then((value) {
       token = value.id;
