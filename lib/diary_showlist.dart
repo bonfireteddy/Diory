@@ -180,7 +180,7 @@ class ListGridView extends StatefulWidget {
 class _ListGridViewState extends State<ListGridView> {
   @override
   Widget build(BuildContext context) {
-    /*FirebaseFirestore.instance
+    FirebaseFirestore.instance
         .collection('Diarys')
         .get()
         .then((QuerySnapshot querySnapshot) {
@@ -189,7 +189,7 @@ class _ListGridViewState extends State<ListGridView> {
       });
     });
     print('got from firebase');
-    */
+
     return Container(
         child: GridView.builder(
             itemCount: diaryList.length + 1,
@@ -254,7 +254,7 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
                   },
                   onTap: () {
                     passwordCheck(context, widget.listIndex, diaryList,
-                        DiaryReadingView(index: widget.listIndex));
+                        DiaryReadingView(diaryIndex: widget.listIndex));
                   },
                 )),
                 feedback: Material(
@@ -273,7 +273,8 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
                 children: [
                   Expanded(
                       child: Text(
-                    diaryList.elementAt(widget.listIndex)['title'],
+                    diaryList.elementAt(widget.listIndex)['title'] ??
+                        'tempTitle',
                     softWrap: false,
                     overflow: TextOverflow.clip,
                   )),
@@ -325,8 +326,9 @@ Widget diaryCover(context, int index) {
                 offset: const Offset(0, 3))
           ],
           image: DecorationImage(
-              image: AssetImage(diaryList.elementAt(index)['image'] ??
-                  'assets/images/coverImages/default.png'))),
+              image: NetworkImage('${diaryList.elementAt(index)['image']}')
+              //image: AssetImage('assets/images/coverImages/default.png')
+              )),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

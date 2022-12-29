@@ -123,7 +123,7 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                     ),
                     onTap: () {
                       passwordCheck(context, index, bookmarkedDiaryList,
-                          DiaryReadingView(index: index));
+                          DiaryReadingView(diaryIndex: index));
                     },
                   )));
             },
