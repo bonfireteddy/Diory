@@ -7,6 +7,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'diary_showlist.dart';
 import 'account_setprofile.dart';
 
+final FirebaseAuth userInfo = FirebaseAuth.instance;
+var nickname;
+
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
   @override
@@ -33,13 +36,14 @@ class MyHomePage extends StatelessWidget {
                           .collection('Users')
                           .snapshots()
                           .listen((event) {
-                            for(int i=0; i<event.size; i++) {
-                              if(event.docs[i]['email'] == userInfo.currentUser!.email) {
-                                nickname = event.docs[i]['username'];
-                                break;
-                              }
-                            }
-                            Scaffold.of(context).openEndDrawer();
+                        for (int i = 0; i < event.size; i++) {
+                          if (event.docs[i]['email'] ==
+                              userInfo.currentUser!.email) {
+                            nickname = event.docs[i]['username'];
+                            break;
+                          }
+                        }
+                        Scaffold.of(context).openEndDrawer();
                       });
                     },
                   )),
@@ -268,7 +272,7 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
   Future signOut() async {
     try {
       return await FirebaseAuth.instance.signOut();
-    } catch(e) {
+    } catch (e) {
       print(e);
     }
   }
@@ -296,7 +300,7 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
                       },
                     )),
             Text(
-              '$nickname님',  // 닉네임이 아니라 이메일로 나옴->수정필요
+              '$nickname님', // 닉네임이 아니라 이메일로 나옴->수정필요
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
             ),
             const Expanded(child: SizedBox()),
@@ -344,7 +348,8 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
           title: Text('나의 템플릿 관리', style: TextStyle(fontSize: 16)),
           onTap: null,
         ),
-        Container(  // 로그아웃 기능
+        Container(
+          // 로그아웃 기능
           width: 60,
           height: 100,
           alignment: Alignment.bottomCenter,
@@ -353,11 +358,11 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
               child: Text('Logout'),
               onPressed: () {
                 signOut();
-                Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-              }
-          ),
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/', (route) => false);
+              }),
         ),
-    ]),
+      ]),
     );
   }
 }
