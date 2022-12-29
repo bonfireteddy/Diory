@@ -5,7 +5,6 @@ import 'package:diory_project/edit_page.dart';
 import 'package:diory_project/store.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'diary_showlist.dart';
 import 'account_setprofile.dart';
@@ -15,9 +14,6 @@ final FirebaseAuth userInfo = FirebaseAuth.instance;
 var nickname;
 
 class MyHomePage extends StatelessWidget {
-  //final String? id;
-  //final String? pass;
-  //const MyHomePage({super.key, this.id, this.pass});
   const MyHomePage({super.key});
   @override
   Widget build(BuildContext context) {
@@ -56,10 +52,7 @@ class MyHomePage extends StatelessWidget {
                   )),
         ],
       ),
-      endDrawer: DrawerMenuBar(
-        //id: id,
-        //pass: pass,
-      ),
+      endDrawer: DrawerMenuBar(),
       body: Row(
         children: [
           const Expanded(flex: 1, child: SizedBox()),
@@ -277,18 +270,12 @@ class _AccountImageIconState extends State<AccountImageIcon> {
 }
 
 class DrawerMenuBar extends StatefulWidget {
-  //final String? id;
-  //final String? pass;
-  //const DrawerMenuBar({super.key, this.id, this.pass});
   const DrawerMenuBar({super.key});
   @override
   State<DrawerMenuBar> createState() => _DrawerMenuBarState();
 }
 
 class _DrawerMenuBarState extends State<DrawerMenuBar> {
-  static final storage = FlutterSecureStorage();
-  //String? id = "";
-  //String? pass = "";
   Future signOut() async {
     try {
       return await FirebaseAuth.instance.signOut();
@@ -305,8 +292,6 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
   @override
   void initState() {
     super.initState();
-    //id = widget.id;
-    //pass = widget.pass;
   }
 
 
@@ -386,7 +371,7 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
               style: TextButton.styleFrom(primary: Colors.grey),
               child: Text('Logout'),
               onPressed: () {
-                //storage.delete(key: "login");
+                //storage.deleteAll();
                 signOut();
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/', (route) => false);

@@ -2,7 +2,6 @@ import 'package:diory_project/store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'join.dart';
 import 'homepage.dart';
 
@@ -18,41 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController =
       TextEditingController(); //입력되는 값을 제어
   final TextEditingController _passwordController = TextEditingController();
-  /*
-  String? userData = "";
 
-  static final storage = FlutterSecureStorage();
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _asyncMethod();
-    });
-  }
-
-  _asyncMethod() async {
-    userData = await storage.read(key: "login");
-    print(userData);
-
-    if(userData != null && userData != "") {
-      Navigator.pushNamed(context,  '/homepage');
-      /*
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => MyHomePage(
-                id: userData!.split(" ")[1],
-                pass: userData!.split(" ")[3],
-              )));
-
-       */
-    } else {
-      print('로그인필요');
-    }
-  }
-
-   */
   @override
   void initState() {
     super.initState();
@@ -120,56 +85,65 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text("Login"),
-        centerTitle: true,
-      ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 20.0),
-              _userIdWidget(),
-              const SizedBox(height: 20.0),
-              _passwordWidget(),
-              const SizedBox(height: 20.0),
-              GestureDetector(
-                child: const Text(
-                  'register',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.grey,
+    return StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if(!snapshot.hasData) {
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: AppBar(
+                title: const Text("Login"),
+                centerTitle: true,
+              ),
+              body: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20.0),
+                      _userIdWidget(),
+                      const SizedBox(height: 20.0),
+                      _passwordWidget(),
+                      const SizedBox(height: 20.0),
+                      GestureDetector(
+                        child: const Text(
+                          'register',
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const JoinPage()),
+                          );
+                        },
+                      ),
+                      Container(
+                        height: 70,
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              primary: Colors.yellow[600],
+                            ),
+                            onPressed: () => _login(),
+                            child: const Text("Login")),
+                      ),
+                    ],
                   ),
                 ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const JoinPage()),
-                  );
-                },
               ),
-              Container(
-                height: 70,
-                padding: const EdgeInsets.only(top: 20.0),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      primary: Colors.yellow[600],
-                    ),
-                    onPressed: () => _login(),
-                    child: const Text("Login")),
-              ),
-            ],
-          ),
-        ),
-      ),
+            );
+          }
+          return const MyHomePage();
+        }
     );
+
   }
 
   @override
@@ -193,10 +167,11 @@ class _LoginPageState extends State<LoginPage> {
         );
         Store.userId = r.user!.uid;
 
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MyHomePage()),
         );
+
       } on FirebaseAuthException catch (e) {
         //logger.e(e);
         //String message = '';
