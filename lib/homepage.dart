@@ -173,10 +173,9 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                                                   .elementAt(index)['cover'] ??
                                               'assets/images/coverImages/default.png'))),
                                 ),
-                                onTap: () {
-                                  Store.currentDiaryId = bookmarkedDiaryList
-                                      .elementAt(index)['id'];
+                                onTap: () async {
                                   // ItemController.setPages();
+                                  await Store.getDiaryPages();
                                   passwordCheck(
                                       context,
                                       bookmarkedDiaryList.elementAt(index),
@@ -186,6 +185,8 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                         },
                         onPageChanged: (value) {
                           _currentPageIndex.value = value;
+                          Store.currentDiaryId = bookmarkedDiaryList
+                              .elementAt(_currentPageIndex.value)['id'];
                         },
                       ),
                     ),

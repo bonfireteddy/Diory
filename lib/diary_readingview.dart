@@ -26,7 +26,6 @@ class _DiaryPageViewState extends State<DiaryPageView> {
   List _pageList = [];
   @override
   Widget build(BuildContext context) {
-    Store.getDiaryPages();
     _pageList = Store.currentDiaryInfo['pages'];
     print('페이지 길이${_pageList.length}');
     print(_pageList);
