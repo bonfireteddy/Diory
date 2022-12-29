@@ -392,6 +392,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.6.2"
+  image_stickers:
+    dependency: "direct main"
+    description:
+      name: image_stickers
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.4"
   intl:
     dependency: transitive
     description:

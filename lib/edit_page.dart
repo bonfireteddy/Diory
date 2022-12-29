@@ -2,6 +2,8 @@ import 'package:diory_project/attach_sticker.dart';
 import 'package:diory_project/write_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:image_stickers/image_stickers.dart';
+import 'package:image_stickers/image_stickers_controls_style.dart';
 
 class EditPage extends StatelessWidget {
   const EditPage({Key? key}) : super(key: key);
@@ -31,7 +33,22 @@ class MyEditPage extends StatefulWidget {
 
 class _MyEditPageState extends State<MyEditPage> {
   final _items = <Widget>[];
+  List<UISticker> stickers = [];
 
+  @override
+  void initState() {
+    stickers.add(createSticker(0, "assets/stickers/Ribone.png"));
+  }
+
+  UISticker createSticker(int index, String s) {
+    return UISticker(
+        imageProvider: AssetImage(s),
+
+        x: 100,
+        y: 360,
+        editable: true);
+  }
+  // 여기까지 스티커 나오게 하는 UIsticker--------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,13 +59,7 @@ class _MyEditPageState extends State<MyEditPage> {
         elevation: 0.0,
         // 앱바 밑에 내려오는 그림자 조절 가능
         backgroundColor: Colors.white,
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     FocusManager.instance.primaryFocus?.unfocus();
-        //     print('back button is clicked');
-        //   },
-        // ),
+
 
         // 텍스트 필드 누르면 키보드가 올라옴과 동시에 우측 상단 햄버거 메뉴가
         // 완료 TextButton으로 바뀌고 완료를 누르면 키보드가 내려가게 하는 이벤트
@@ -64,57 +75,28 @@ class _MyEditPageState extends State<MyEditPage> {
               },
               icon: Icon(Icons.check))
         ],
-        // actions: <Widget>[
-        //   IconButton(
-        //     icon: const Icon(Icons.menu),
-        //     onPressed: () {
-        //       print('menu button is clicked');
-        //     },
-        //   ),
-        // ],
-      ),
-      endDrawer: Drawer(
-        // 햄버거 menu아이콘을 만들지 않아야 나온다!!! -> 햄버거 아이콘을 자동적으로 만들어줌
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text('Drawer Header'),
-            ),
-            ListTile(
-              title: const Text('Item1'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-      // ------------------------------------------------------
 
-      body: Stack(
+      ),
+
+
+      body: Column(
         children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const <Widget>[
-                TextField(
-                  style: TextStyle(fontSize: 30.0),
-                  decoration: InputDecoration(
-                    // font 변경방법?
-                    labelText: '제목을 입력하세요',
-                    isDense: true,
-                  ),
-                  minLines: 60,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
+          Expanded(
+              flex: 30,
+              child: Container(
+                child: ImageStickers(
+                  backgroundImage: const AssetImage("assets/stickers/white_page.png"),
+                  stickerList: stickers,
+                  stickerControlsStyle: ImageStickersControlsStyle(
+                      color: Colors.blueGrey,
+                      child: const Icon(
+                        Icons.zoom_out_map,
+                        color: Colors.white,
+                      )),
                 ),
-              ],
-            ),
-          ),
+              )),
+          Expanded(flex: 1, child: Container()),
+          // ----------아이콘 크기 조절 박스 -----------------
           for (var item in _items) item
         ],
       ),
@@ -124,6 +106,8 @@ class _MyEditPageState extends State<MyEditPage> {
       floatingActionButton: SpeedDial(
         icon: Icons.add,
         activeIcon: Icons.close,
+        overlayColor: Colors.grey,
+        overlayOpacity: 0.5,
         //animatedIcon: AnimatedIcons.menu_close, -> 기본아이콘이 햄버거로 정해져있음.
 
         children: [
@@ -138,8 +122,8 @@ class _MyEditPageState extends State<MyEditPage> {
           SpeedDialChild(
             child: Icon(Icons.emoji_emotions),
             label: 'sticker',
-            onTap: () {
-              addSticker();
+            onTap: () { /////------------------스티커 추가기능
+              show_sticker_menu();
             },
           ),
           SpeedDialChild(
@@ -230,16 +214,195 @@ class _MyEditPageState extends State<MyEditPage> {
         });
   }
 
-  void addSticker() {
-    setState(() {
-      _items.add(AttachSticker(
-          sticker: Image(
-        image: AssetImage("assets/stickers/sticker_1.png"),
-        width: 100,
-        height: 100,
-      )));
-    });
-    print(_items);
+  void show_sticker_menu() {
+    showModalBottomSheet(
+      // bottom sheet
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: 400,
+          child: Column(
+            children: [
+              Expanded(
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceEvenly,
+                        children: [
+                          InkWell( // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
+                            onTap: () {
+                              setState(() {
+                                stickers.add(createSticker(stickers.length,"assets/stickers/ory_1.png"));
+                              });
+                            },
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/stickers/ory_1.png'),
+                            ),
+                          ),
+                          InkWell( // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
+                            onTap: () {
+                              setState(() {
+                                stickers.add(createSticker(stickers.length, 'assets/stickers/Ribone.png'));
+                              });
+                            },
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/stickers/Ribone.png'),
+                            ),
+                          ),
+                          InkWell( // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
+                            onTap: () {
+                              setState(() {
+                                stickers.add(createSticker(stickers.length, 'assets/stickers/tabaco.png'));
+                              });
+                            },
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/stickers/tabaco.png'),
+                            ),
+                          ),
+                          InkWell( // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
+                            onTap: () {
+                              setState(() {
+                                stickers.add(createSticker(stickers.length, 'assets/stickers/tears.png'));
+                              });
+                            },
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/stickers/tears.png'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // 1줄 ------------------------------------------
+              Expanded(
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceEvenly,
+                        children: [
+                          InkWell( // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
+                            onTap: () {
+
+                            },
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/ory_1.png'),
+                            ),
+                          ),
+                          InkWell( // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
+                            onTap: () {
+
+                            },
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/ory_1.png'),
+                            ),
+                          ),
+                          InkWell( // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
+                            onTap: () {
+
+                            },
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/ory_1.png'),
+                            ),
+                          ),
+                          InkWell( // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
+                            onTap: () {
+
+                            },
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/ory_1.png'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceEvenly,
+                        children: [
+                          InkWell( // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
+                            onTap: () {
+
+                            },
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/ory_1.png'),
+                            ),
+                          ),
+                          InkWell( // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
+                            onTap: () {
+
+                            },
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/ory_1.png'),
+                            ),
+                          ),
+                          InkWell( // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
+                            onTap: () {
+
+                            },
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/ory_1.png'),
+                            ),
+                          ),
+                          InkWell( // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
+                            onTap: () {
+
+                            },
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/ory_1.png'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void clear() {
