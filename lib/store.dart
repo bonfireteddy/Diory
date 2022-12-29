@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diory_project/edit_page.dart';
 import 'package:diory_project/write_text.dart';

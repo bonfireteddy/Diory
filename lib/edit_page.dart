@@ -1,9 +1,11 @@
+import 'package:diory_project/stickerCollection.dart';
 import 'package:diory_project/write_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_stickers/image_stickers.dart';
 import 'package:image_stickers/image_stickers_controls_style.dart';
 import 'store.dart';
+import 'package:diory_project/stickerCollection.dart';
 
 class ItemController {
   static int id = 0;
@@ -244,8 +246,8 @@ class MyEditPageState extends State<MyEditPage> {
       context: context,
       builder: (BuildContext context) {
         return SizedBox(
-          height: 400,
-          child: Column(
+            height: 400,
+            /*child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -273,8 +275,37 @@ class MyEditPageState extends State<MyEditPage> {
                 ],
               ),
             ],
-          ),
-        );
+          ),*/
+            child: GridView.builder(
+              itemCount: AssetSticker.stickerIdx.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                childAspectRatio: 1.0,
+              ),
+              itemBuilder: (context, index) {
+                return Container(
+                  child: Column(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            ItemController.stickerItems.add(createSticker(
+                                ItemController.stickerItems.length,
+                                'assets/stickers/${index.toString()}.png'));
+                          });
+                        },
+                        child: SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: Image.asset(
+                              'assets/stickers/${index.toString()}.png'),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ));
       },
     );
   }
