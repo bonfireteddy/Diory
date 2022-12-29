@@ -6,7 +6,7 @@ import 'store.dart';
 class ItemController {
   static int id = 0;
   static List<WriteText> items = <WriteText>[];
-
+  static void reload() {}
   static void add(WriteText item) {
     items.add(item);
   }
@@ -82,8 +82,11 @@ class MyEditPageState extends State<MyEditPage> {
               onPressed: () => ItemController.setPage(0),
               icon: const Icon(Icons.save)),
           IconButton(
-              onPressed: () => Store.createNewDiary(),
-              icon: const Icon(Icons.refresh))
+              onPressed: () async {
+                await Store.getPost();
+                setState(() {});
+              },
+              icon: const Icon(Icons.refresh)),
         ],
       ),
       endDrawer: Drawer(
