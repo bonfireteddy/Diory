@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diory_project/diary_setting.dart';
 import 'package:diory_project/diary_readingview.dart';
+import 'package:diory_project/edit_page.dart';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
 
@@ -91,11 +92,86 @@ class _ListGridViewState extends State<ListGridView> {
             //return Text("...");
           }
           return GridView(
+/////////// IOS-ISSUE-2
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 3 / 4,
                 mainAxisSpacing: 10,
                 crossAxisSpacing: 10),
+            children: [
+                  DragTarget(
+                    builder: (context, candidateData, rejectedData) =>
+                        Container(
+                      child: DiaryGridItem(data: null),
+                    ),
+                  )
+                ] +
+                (snapshot.data != null
+                    ? (snapshot.data!.docs.map((DocumentSnapshot document) {
+                        Map<String, dynamic> data =
+                            document.data()! as Map<String, dynamic>;
+                        data['id'] = document.id;
+                        return DragTarget(
+                          builder: (context, candidateData, rejectedData) =>
+                              Container(
+                            child: DiaryGridItem(data: data),
+                          ),
+                          onWillAccept: (objectData) =>
+                              int.parse(objectData.toString()) != -1,
+                          onAccept: (objectData) {
+                            int fromIndex =
+                                int.tryParse(objectData.toString()) ?? -1;
+                            int toIndex = data['index'];
+                            if (toIndex == -1 || toIndex == fromIndex) return;
+                            int largerIndex =
+                                toIndex > fromIndex ? toIndex : fromIndex;
+                            int smallerIndex =
+                                toIndex < fromIndex ? toIndex : fromIndex;
+                            print("from $fromIndex to $toIndex");
+                            setState(() {
+                              /*diaryList.insert(smallerIndex,
+                                  diaryList.removeAt(largerIndex));
+                              diaryList.insert(largerIndex,
+                                  diaryList.removeAt(smallerIndex + 1));*/
+                            });
+                          },
+                        );
+                      }).toList())
+                    : []),
+          );
+        });
+    /*return Container(
+        child: GridView.builder(
+            itemCount: diaryList.length + 1,
+
+/////////// main
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 3 / 4,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10),
+///////////IOS-ISSUE-2
+            itemBuilder: (context, index) => DragTarget(
+                  builder: (context, candidateData, rejectedData) => Container(
+                    child: DiaryGridItem(listIndex: index - 1),
+                  ),
+                  onWillAccept: (data) => int.parse(data.toString()) != -1,
+                  onAccept: (data) {
+                    int fromIndex = int.tryParse(data.toString()) ?? -1;
+                    int toIndex = index - 1;
+                    if (toIndex == -1 || toIndex == fromIndex) return;
+                    int largerIndex = toIndex > fromIndex ? toIndex : fromIndex;
+                    int smallerIndex =
+                        toIndex < fromIndex ? toIndex : fromIndex;
+                    setState(() {
+                      diaryList.insert(
+                          smallerIndex, diaryList.removeAt(largerIndex));
+                      diaryList.insert(
+                          largerIndex, diaryList.removeAt(smallerIndex + 1));
+                    });
+                  },
+                )));*/
+=======
             children: [
                   DragTarget(
                     builder: (context, candidateData, rejectedData) =>
@@ -147,6 +223,7 @@ class _ListGridViewState extends State<ListGridView> {
                     : []),
           );
         });
+// main
   }
 }
 
@@ -182,6 +259,8 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
                     });
                   },
                   onTap: () {
+                    ItemController.stickerItems = [];
+                    ItemController.textItems = [];
                     passwordCheck(context, widget.data, DiaryReadingView());
                   },
                 )),

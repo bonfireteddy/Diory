@@ -41,6 +41,49 @@ class ItemController {
     ]));
   }
 
+  static List<Stack> pages = <Stack>[];
+
+  static Future setPages() async {
+    pages = <Stack>[];
+    int i = 0;
+    await Store.getPost();
+    for (var data in Store.currentDiaryInfo["pages"]) {
+      List<WriteText> textItems = <WriteText>[];
+      List<UISticker> stickerItems = <UISticker>[];
+      if (data["components"].length > 0) {
+        for (var page in data["components"]) {
+          print(page);
+          if (page["type"] == "Text") {
+            textItems.add(WriteText(
+                id: i++, text: page["text"], dx: page["x"], dy: page["y"]));
+          } else if (page["type"] == "Sticker") {
+            stickerItems.add(UISticker(
+                imageProvider: AssetImage(page["stickerId"]),
+                x: page["x"],
+                y: page["y"],
+                size: page["size"],
+                angle: page["angle"],
+                editable: false));
+          }
+        }
+      }
+
+      pages.add(Stack(children: [
+        ImageStickers(
+          backgroundImage: const AssetImage("assets/stickers/white_page.png"),
+          stickerList: stickerItems,
+          stickerControlsStyle: ImageStickersControlsStyle(
+              color: Colors.blueGrey,
+              child: const Icon(
+                Icons.zoom_out_map,
+                color: Colors.white,
+              )),
+        ),
+        for (var item in textItems) item,
+      ]));
+    }
+  }
+
   static void update(int id, String text) {
     int index = textItems.indexWhere((item) => item.id == id);
     if (index < 0) return;
@@ -129,7 +172,15 @@ class MyEditPageState extends State<MyEditPage> {
 
         actions: [
           IconButton(
-              onPressed: () => ItemController.setPage(0),
+              onPressed: () {
+                print("Now Page : ${widget.pageIndex}");
+                if (widget.pageIndex == -1) {
+                  ItemController.setPage(ItemController.pages.length);
+                } else {
+                  ItemController.setPage(widget.pageIndex);
+                }
+                ItemController.setPages();
+              },
               icon: const Icon(Icons.save)),
           IconButton(
               onPressed: () async {

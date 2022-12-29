@@ -9,7 +9,7 @@ var db = FirebaseFirestore.instance;
 
 class Store {
   static String userId = "YE7Fz6e0BfT6qHqujFuwhZByL5m2";
-  static String currentDiaryId = "GrZSSShpj3vLvLstKT3R";
+  static String currentDiaryId = "edyDuhGPSK7pHvsJOms1";
   static Map<String, dynamic> currentDiaryInfo = {"title": "", "pages": []};
 
   static Map<int, dynamic> temp = {};
@@ -35,11 +35,10 @@ class Store {
   static Future getPost() async {
     var data = await db.collection("Diarys").doc(currentDiaryId).get();
     currentDiaryInfo["pages"] = data["pages"];
-    drawPage(data);
+    drawPage(data, 0);
   }
 
-  /* 데이터베이스에서 페이지 정보 불러옴 */
-  static void drawPage(DocumentSnapshot<Map<String, dynamic>> data) {
+  static void drawPage(data, pageIdx) {
     List<WriteText> textItems = [];
     List<Sticker> stickerItems = [];
     int i = 0;
@@ -48,7 +47,7 @@ class Store {
       ItemController.stickerItems = [];
       return;
     }
-    for (var page in data["pages"][0]["components"]) {
+    for (var page in data["pages"][pageIdx]["components"]) {
       if (page["type"] == "Text") {
         textItems.add(WriteText(
             id: i++, text: page["text"], dx: page["x"], dy: page["y"]));
