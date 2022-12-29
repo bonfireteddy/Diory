@@ -47,7 +47,6 @@ class ItemController {
     pageData["components"] = temp;
     Store.setPage(idx, pageData);
     Store.setDiary();
-    print(Store.currentDiaryInfo);
   }
 }
 
@@ -119,7 +118,12 @@ class MyEditPageState extends State<MyEditPage> {
                   setState(() {});
                 });
               },
-              icon: const Icon(Icons.check))
+              icon: const Icon(Icons.check)),
+          IconButton(
+              onPressed: () {
+                Store.createNewDiary();
+              },
+              icon: const Icon(Icons.create_new_folder))
         ],
       ),
       body: Stack(children: [
