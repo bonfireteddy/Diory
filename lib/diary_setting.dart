@@ -199,7 +199,7 @@ class _DiarySettingState extends State<DiarySetting> {
   }
 }
 
-Widget diaryCreateSuccesDialog(context, index) {
+Widget diaryCreateSuccesDialog(context, id) {
   return AlertDialog(
       title: const Text('Create Success!'),
       content: Container(
@@ -208,14 +208,14 @@ Widget diaryCreateSuccesDialog(context, index) {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Column(children: [
+              /*Column(children: [
                 Image.asset(
                   diaryList.elementAt(index)['image'],
                   width: MediaQuery.of(context).size.width * 0.45,
                   height: MediaQuery.of(context).size.width * 0.60,
                 ),
                 Text(diaryList.elementAt(index)['title'])
-              ]),
+              ]),*/
               const Text('첫 페이지를 작성하시겠습니까?'),
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,

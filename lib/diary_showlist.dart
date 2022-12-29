@@ -4,111 +4,6 @@ import 'package:diory_project/diary_readingview.dart';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
 
-//List diaryList = [];
-List diaryList = [
-  {
-    'image': 'assets/images/coverImages/0.png',
-    'title': 'My Diary 1',
-    'password': 'qwer',
-    'bookmarked': true,
-    'pages': [
-      {'components': []},
-      {'components': []},
-      {'components': []},
-    ],
-  },
-  {
-    'image': 'assets/images/coverImages/1.png',
-    'title': 'Mydiary 2',
-    'password': null,
-    'bookmarked': false,
-  },
-  {
-    'image': 'assets/images/coverImages/2.png',
-    'title': 'MY_Diary3',
-    'password': 'qwer',
-    'bookmarked': true,
-  },
-  {
-    'image': 'assets/images/coverImages/3.png',
-    'title': 'my diary 4',
-    'password': null,
-    'bookmarked': false,
-  },
-  {
-    'image': 'assets/images/coverImages/4.png',
-    'title': 'My-Diary5',
-    'password': null,
-    'bookmarked': true,
-  },
-  {
-    'image': 'assets/images/coverImages/5.png',
-    'title': 'myDiary6',
-    'password': null,
-    'bookmarked': false,
-  },
-  {
-    'image': 'assets/images/coverImages/6.png',
-    'title': 'myDiary7',
-    'password': null,
-    'bookmarked': true,
-  },
-  {
-    'image': 'assets/images/coverImages/7.png',
-    'title': 'myDiary8',
-    'password': null,
-    'bookmarked': false,
-  },
-  {
-    'image': 'assets/images/coverImages/8.png',
-    'title': 'myDiary9',
-    'password': null,
-    'bookmarked': false,
-  },
-  {
-    'image': 'assets/images/coverImages/9.png',
-    'title': 'myDiary10',
-    'password': null,
-    'bookmarked': false,
-  },
-  {
-    'image': 'assets/images/coverImages/10.png',
-    'title': 'myDiary11',
-    'password': null,
-    'bookmarked': false,
-  },
-  {
-    'image': 'assets/images/coverImages/11.png',
-    'title': 'myDiary12',
-    'password': null,
-    'bookmarked': false,
-  },
-  {
-    'image': 'assets/images/coverImages/12.png',
-    'title': 'myDiary13',
-    'password': null,
-    'bookmarked': false,
-  },
-  {
-    'image': 'assets/images/coverImages/13.png',
-    'title': 'myDiary14',
-    'password': null,
-    'bookmarked': false,
-  },
-  {
-    'image': 'assets/images/coverImages/14.png',
-    'title': 'myDiary15',
-    'password': null,
-    'bookmarked': false,
-  },
-  {
-    'image': 'assets/images/coverImages/15.png',
-    'title': 'myDiary16',
-    'password': null,
-    'bookmarked': true,
-  },
-];
-
 class DiaryShowList extends StatelessWidget {
   const DiaryShowList({super.key});
   @override
@@ -230,10 +125,10 @@ class _ListGridViewState extends State<ListGridView> {
                                 toIndex < fromIndex ? toIndex : fromIndex;
                             print("from $fromIndex to $toIndex");
                             setState(() {
-                              diaryList.insert(smallerIndex,
+                              /*diaryList.insert(smallerIndex,
                                   diaryList.removeAt(largerIndex));
                               diaryList.insert(largerIndex,
-                                  diaryList.removeAt(smallerIndex + 1));
+                                  diaryList.removeAt(smallerIndex + 1));*/
                             });
                           },
                         );
