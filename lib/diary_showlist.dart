@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diory_project/diary_setting.dart';
 import 'package:diory_project/diary_readingview.dart';
@@ -90,6 +92,7 @@ class _ListGridViewState extends State<ListGridView> {
             //return Text("...");
           }
           return GridView(
+/////////// IOS-ISSUE-2
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 3 / 4,
@@ -140,11 +143,14 @@ class _ListGridViewState extends State<ListGridView> {
     /*return Container(
         child: GridView.builder(
             itemCount: diaryList.length + 1,
+
+/////////// main
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 3 / 4,
                 mainAxisSpacing: 10,
                 crossAxisSpacing: 10),
+///////////IOS-ISSUE-2
             itemBuilder: (context, index) => DragTarget(
                   builder: (context, candidateData, rejectedData) => Container(
                     child: DiaryGridItem(listIndex: index - 1),
@@ -165,6 +171,59 @@ class _ListGridViewState extends State<ListGridView> {
                     });
                   },
                 )));*/
+=======
+            children: [
+                  DragTarget(
+                    builder: (context, candidateData, rejectedData) =>
+                        Container(
+                      child: DiaryGridItem(data: null),
+                    ),
+                  )
+                ] +
+                (snapshot.data != null
+                    ? (snapshot.data!.docs.map((DocumentSnapshot document) {
+                        Map<String, dynamic> data =
+                            document.data()! as Map<String, dynamic>;
+                        data['id'] = document.id;
+                        return DragTarget(
+                          builder: (context, candidateData, rejectedData) =>
+                              Container(
+                            child: DiaryGridItem(data: data),
+                          ),
+                          onWillAccept: (objectData) =>
+                              jsonDecode(objectData.toString())['listIndex'] !=
+                              -1,
+                          onAccept: (objectData) {
+                            int fromIndex = jsonDecode(
+                                    objectData.toString())['listIndex'] ??
+                                -1;
+
+                            int toIndex = data['index'];
+                            if (toIndex == -1 || toIndex == fromIndex) return;
+                            String fromId =
+                                jsonDecode(objectData.toString())['data']['id'];
+                            String toId = data['id'];
+                            print("from $fromIndex $fromId to $toIndex $toId");
+
+                            FirebaseFirestore.instance
+                                .collection("TempDiarys")
+                                .doc(fromId)
+                                .update({'index': toIndex});
+                            FirebaseFirestore.instance
+                                .collection("TempDiarys")
+                                .doc(toId)
+                                .update({'index': fromIndex});
+                            /*diaryList.insert(smallerIndex,
+                                  diaryList.removeAt(largerIndex));
+                              diaryList.insert(largerIndex,
+                                  diaryList.removeAt(smallerIndex + 1));*/
+                          },
+                        );
+                      }).toList())
+                    : []),
+          );
+        });
+// main
   }
 }
 
@@ -189,7 +248,7 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
                 child: addDiaryButton(context),
               ))
             : Draggable(
-                data: listIndex,
+                data: jsonEncode({'listIndex': listIndex, 'data': widget.data}),
                 maxSimultaneousDrags: listIndex == -1 ? 0 : 1,
                 child: Material(
                     child: InkWell(

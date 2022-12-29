@@ -125,6 +125,7 @@ class _DiaryPageViewState extends State<DiaryPageView> {
                             itemCount: ItemController.pages.length,
                             itemBuilder: (context, index) {
                               return Container(
+                                color: Colors.blue,
                                 width:
                                     MediaQuery.of(context).size.width * 0.60 +
                                         20,

@@ -2,15 +2,44 @@ import 'package:diory_project/stickerCollection.dart';
 import 'package:diory_project/write_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_stickers/image_stickers.dart';
 import 'package:image_stickers/image_stickers_controls_style.dart';
 import 'store.dart';
 import 'package:diory_project/stickerCollection.dart';
 
+class Sticker {
+  int id;
+  UISticker uiSticker;
+  Sticker({required this.id, required this.uiSticker});
+}
+
 class ItemController {
   static int id = 0;
   static List<WriteText> textItems = <WriteText>[];
-  static List<UISticker> stickerItems = <UISticker>[];
+  static List<Sticker> stickerItems = <Sticker>[];
+
+  static List<Stack> pages = <Stack>[];
+
+  static void setPages() {
+    int i = 0;
+    for (var page
+        in Store.currentDiaryInfo["pages"]) {} //페이지를 스택으로 모두 저장 (스택만 보여주기)
+    pages.add(Stack(children: [
+      ImageStickers(
+        backgroundImage: const AssetImage("assets/stickers/white_page.png"),
+        stickerList:
+            ItemController.stickerItems.map((e) => e.uiSticker).toList(),
+        stickerControlsStyle: ImageStickersControlsStyle(
+            color: Colors.blueGrey,
+            child: const Icon(
+              Icons.zoom_out_map,
+              color: Colors.white,
+            )),
+      ),
+      for (var item in ItemController.textItems) item,
+    ]));
+  }
 
   static List<Stack> pages = <Stack>[];
 
@@ -78,12 +107,12 @@ class ItemController {
     }
     for (var item in ItemController.stickerItems) {
       temp.add({
-        "stickerId": item.imageProvider.toString().split("\"")[1],
+        "stickerId": item.uiSticker.imageProvider.toString().split("\"")[1],
         "type": "Sticker",
-        "x": item.x,
-        "y": item.y,
-        "angle": item.angle,
-        "size": item.size
+        "x": item.uiSticker.x,
+        "y": item.uiSticker.y,
+        "angle": item.uiSticker.angle,
+        "size": item.uiSticker.size
       });
     }
 
@@ -160,13 +189,16 @@ class MyEditPageState extends State<MyEditPage> {
               },
               icon: const Icon(Icons.refresh)),
           IconButton(
-              onPressed: () async {
-                await ItemController.setPages();
-                bool state = (ItemController.stickerItems.length > 0)
-                    ? ItemController.stickerItems[0].editable
+              onPressed: () {
+                bool state = (ItemController.stickerItems
+                            .map((e) => e.uiSticker)
+                            .toList()
+                            .length >
+                        0)
+                    ? ItemController.stickerItems[0].uiSticker.editable
                     : true;
                 ItemController.stickerItems.forEach((sticker) {
-                  sticker.editable = !state;
+                  sticker.uiSticker.editable = !state;
                   setState(() {});
                 });
               },
@@ -181,7 +213,8 @@ class MyEditPageState extends State<MyEditPage> {
       body: Stack(children: [
         ImageStickers(
           backgroundImage: const AssetImage("assets/stickers/white_page.png"),
-          stickerList: ItemController.stickerItems,
+          stickerList:
+              ItemController.stickerItems.map((e) => e.uiSticker).toList(),
           stickerControlsStyle: ImageStickersControlsStyle(
               color: Colors.blueGrey,
               child: const Icon(
@@ -196,6 +229,8 @@ class MyEditPageState extends State<MyEditPage> {
         activeIcon: Icons.close,
         overlayColor: Colors.grey,
         overlayOpacity: 0.5,
+        switchLabelPosition: true,
+        closeManually: true,
         //animatedIcon: AnimatedIcons.menu_close, -> 기본아이콘이 햄버거로 정해져있음.
 
         children: [
@@ -216,6 +251,7 @@ class MyEditPageState extends State<MyEditPage> {
           ),
           SpeedDialChild(
             child: Icon(Icons.undo),
+            visible: true,
             label: 'undo',
             onTap: () {
               undo();
@@ -301,7 +337,7 @@ class MyEditPageState extends State<MyEditPage> {
             height: 400,
             child: GridView.builder(
               itemCount: AssetSticker.stickerIdx.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
                 childAspectRatio: 1.0,
               ),
@@ -312,9 +348,11 @@ class MyEditPageState extends State<MyEditPage> {
                       InkWell(
                         onTap: () {
                           setState(() {
-                            ItemController.stickerItems.add(createSticker(
-                                ItemController.stickerItems.length,
-                                'assets/stickers/${index.toString()}.png'));
+                            ItemController.stickerItems.add(Sticker(
+                                id: ItemController.stickerItems.length,
+                                uiSticker: createSticker(
+                                    ItemController.stickerItems.length,
+                                    'assets/stickers/${index.toString()}.png')));
                           });
                         },
                         child: SizedBox(
@@ -342,8 +380,12 @@ class MyEditPageState extends State<MyEditPage> {
   }
 
   void undo() {
+    List<UISticker> sticker_Items = ItemController.stickerItems;
     setState(() {
-      if (!_items.isEmpty) _items.removeAt(_items.length - 1);
+      // ()안이 items에 요소가 비어있지 않을때만, 리스트에서 삭제한다.
+      if (sticker_Items.isNotEmpty) {
+        sticker_Items.removeAt(sticker_Items.length - 1);
+      }
     });
   }
 }
