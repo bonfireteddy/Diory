@@ -156,8 +156,7 @@ class _LoginPageState extends State<LoginPage> {
           email: _emailController.text,
           password: _passwordController.text,
         );
-        Store.token = r.user!.uid;
-        print(Store.token);
+        Store.userId = r.user!.uid;
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const MyHomePage()),
