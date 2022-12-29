@@ -1,11 +1,13 @@
 import 'package:diory_project/diary_setting.dart';
 import 'package:diory_project/diary_readingview.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'diary_showlist.dart';
 import 'account_setprofile.dart';
 
-final bookmarkedDiaryList = diaryList.where((e) => e['bookmarked']);
+final bookmarkedDiaryList = diaryList;
+final FirebaseAuth userInfo = FirebaseAuth.instance;
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -87,7 +89,7 @@ class HomeDiaryPageView extends StatefulWidget {
 
 class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
   int _currentPageIndex = 0;
-  PageController pageController = PageController(initialPage: 0);
+  PageController _pageController = PageController(initialPage: 0);
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -98,7 +100,7 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
           height: MediaQuery.of(context).size.height * 0.55,
           color: Colors.white,
           child: PageView.builder(
-            controller: pageController,
+            controller: _pageController,
             itemCount: bookmarkedDiaryList.length,
             itemBuilder: (context, index) {
               return Container(
@@ -123,7 +125,7 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                     ),
                     onTap: () {
                       passwordCheck(context, index, bookmarkedDiaryList,
-                          DiaryReadingView(index: index));
+                          DiaryReadingView(diaryIndex: index));
                     },
                   )));
             },
@@ -160,7 +162,7 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                 },
                 onSelected: ((value) {
                   _currentPageIndex = value;
-                  pageController.animateToPage(_currentPageIndex,
+                  _pageController.animateToPage(_currentPageIndex,
                       duration: const Duration(microseconds: 500),
                       curve: Curves.easeIn);
                 }),
@@ -209,7 +211,15 @@ class DrawerMenuBar extends StatefulWidget {
 }
 
 class _DrawerMenuBarState extends State<DrawerMenuBar> {
-  final String alias = '오리너구리'; //사용자 별명
+  Future signOut() async {
+    try {
+      return await FirebaseAuth.instance.signOut();
+    } catch(e) {
+      print(e);
+    }
+  }
+  //final String alias = '오리너구리'; //사용자 별명
+  String? alias = userInfo.currentUser!.email;
   final String accountImageUrl =
       'assets/images/account_icon_image.png'; //프로필 사진 주소
   @override
@@ -231,7 +241,7 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
                       },
                     )),
             Text(
-              '\t$alias님',
+              '$alias님',  // 닉네임이 아니라 이메일로 나옴->수정필요
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
             ),
             const Expanded(child: SizedBox()),
@@ -244,25 +254,27 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
                   image: DecorationImage(
                       image: AssetImage(accountImageUrl), fit: BoxFit.fill),
                 )),
-            Container(
-              width: 60,
-              height: 100,
-              alignment: Alignment.bottomLeft,
-              child: IconButton(
-                  icon: const Icon(
-                    Icons.settings,
-                    color: Colors.black,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AccountSetProfile()));
-                  }),
-            ),
+            const SizedBox(width: 50)
           ],
         ),
-        const SizedBox(height: 40.0),
+        const SizedBox(height: 30.0),
+        const Divider(
+            height: 20,
+            thickness: 1.5,
+            indent: 20,
+            endIndent: 30,
+            color: Color(0xffFCD2D2)),
+        ListTile(
+          leading: Icon(
+            Icons.account_box,
+            color: Colors.black,
+          ),
+          title: Text('계정 관리', style: TextStyle(fontSize: 16)),
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => AccountSetProfile()));
+          },
+        ),
         const Divider(
             height: 20,
             thickness: 1.5,
@@ -277,63 +289,20 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
           title: Text('나의 템플릿 관리', style: TextStyle(fontSize: 16)),
           onTap: null,
         ),
-        const Divider(
-            height: 20,
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 30,
-            color: Color(0xffFCD2D2)),
-        const ListTile(
-          leading: Icon(
-            Icons.storefront,
-            color: Colors.black,
+        Container(  // 로그아웃 기능
+          width: 60,
+          height: 100,
+          alignment: Alignment.bottomCenter,
+          child: TextButton(
+              style: TextButton.styleFrom(primary: Colors.grey),
+              child: Text('Logout'),
+              onPressed: () {
+                signOut();
+                Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+              }
           ),
-          title: Text('템플릿 스토어', style: TextStyle(fontSize: 16)),
-          onTap: null,
         ),
-        const Divider(
-            height: 20,
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 30,
-            color: Color(0xffFCD2D2)),
-        const ListTile(
-          leading: Icon(
-            Icons.play_lesson_rounded,
-            color: Colors.black,
-          ),
-          title: Text('튜토리얼 다시보기', style: TextStyle(fontSize: 16)),
-          onTap: null,
-        ),
-        const Divider(
-            height: 20,
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 30,
-            color: Color(0xffFCD2D2)),
-        const ListTile(
-          leading: Icon(
-            Icons.account_box,
-            color: Colors.black,
-          ),
-          title: Text('계정 관리', style: TextStyle(fontSize: 16)),
-          onTap: null,
-        ),
-        const Divider(
-            height: 20,
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 30,
-            color: Color(0xffFCD2D2)),
-        const ListTile(
-          leading: Icon(
-            Icons.logout,
-            color: Colors.black,
-          ),
-          title: Text('로그아웃', style: TextStyle(fontSize: 16)),
-          onTap: null,
-        ),
-      ]),
+    ]),
     );
   }
 }
@@ -360,7 +329,6 @@ Widget diaryMenuButton(context, double size, int index) {
                 '다이어리 삭제',
                 style: TextStyle(color: Colors.red),
               ),
-              onTap: null,
             ),
           ]),
       onSelected: (value) {
@@ -370,6 +338,8 @@ Widget diaryMenuButton(context, double size, int index) {
                 context, index, diaryList, EditDiarySetting(index: index));
             break;
           case 1:
+            passwordCheck(context, index, diaryList,
+                DeleteDiaryWarningDialog(context, index));
             break;
         }
       },
@@ -427,4 +397,33 @@ void passwordCheck(context, int index, diaryList, route) {
     ),
   );
   return;
+}
+
+Widget DeleteDiaryWarningDialog(context, index) {
+  return AlertDialog(
+      icon: Icon(
+        Icons.warning,
+        color: Colors.red,
+        size: 50,
+      ),
+      content: Text(
+        '정말로....\n${bookmarkedDiaryList.elementAt(index)['title']} 다이어리를\n영원히 삭제할까요....?',
+        style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+            backgroundColor: Colors.yellow),
+      ),
+      actions: [
+        TextButton(
+            onPressed: () {
+              //데이터베이스에서 다이어리 삭제하기
+              Navigator.pop(context);
+            },
+            child: const Text('그러세요')),
+        TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('아직좀더생각해봄'))
+      ]);
 }

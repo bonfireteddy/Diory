@@ -117,7 +117,7 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MyEditPage(title: 'title'),
+                builder: (context) => MyEditPage(diaryIndex: -1, pageIndex: -1),
               ));
         },
         child: Container(
