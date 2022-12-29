@@ -8,17 +8,9 @@ import 'package:flutter/material.dart';
 var db = FirebaseFirestore.instance;
 
 class Store {
-  static String token = "";
-  static String userId = "BWBe0HQ2h50rhCCGtW9J";
-
-  static String currentDiaryId = "";
-  static var currentDiaryInfo = {
-    "id": currentDiaryId,
-    "userid": userId,
-    "pages": [],
-    "password": null,
-    "coverid": 0
-  };
+  static String userId = "YE7Fz6e0BfT6qHqujFuwhZByL5m2";
+  static String currentDiaryId = "GrZSSShpj3vLvLstKT3R";
+  static Map<String, dynamic> currentDiaryInfo = {"title": "", "pages": []};
 
   static Map<int, dynamic> temp = {};
   static void setPage(int pageidx, Map items) {
@@ -27,33 +19,35 @@ class Store {
 
   static void setDiary() {
     var pages = [];
-    print(temp);
     for (var item in temp.values) {
       pages.add(item);
     }
     currentDiaryInfo["pages"] = pages;
-    createPost();
+    updatePost();
   }
 
   //Firebase
-  static void createPost() {
-    String diaryId = "GrZSSShpj3vLvLstKT3R";
+  static void updatePost() {
     var data = currentDiaryInfo;
-    db.collection("Diarys").doc(diaryId).set(data);
+    db.collection("Diarys").doc(currentDiaryId).update(data);
   }
 
   static Future getPost() async {
-    String diaryId = "GrZSSShpj3vLvLstKT3R";
-    var data = await db.collection("Diarys").doc(diaryId).get();
+    var data = await db.collection("Diarys").doc(currentDiaryId).get();
     currentDiaryInfo["pages"] = data["pages"];
-    drawPage(data);
+    drawPage(data, 0);
   }
 
-  static void drawPage(DocumentSnapshot<Map<String, dynamic>> data) {
+  static void drawPage(data, pageIdx) {
     List<WriteText> textItems = [];
     List<UISticker> stickerItems = [];
     int i = 0;
-    for (var page in data["pages"][0]["components"]) {
+    if (data["pages"].length == 0) {
+      ItemController.textItems = [];
+      ItemController.stickerItems = [];
+      return;
+    }
+    for (var page in data["pages"][pageIdx]["components"]) {
       if (page["type"] == "Text") {
         textItems.add(WriteText(
             id: i++, text: page["text"], dx: page["x"], dy: page["y"]));
@@ -72,25 +66,28 @@ class Store {
   }
 
   static void getDiaryPages() {
-    String diaryId = "GrZSSShpj3vLvLstKT3R";
-    var pages = []; // 하나의 다이어리의 모든 페이지
-    db.collection("Diarys").doc(diaryId).get().then((d) {
-      for (var page in d["pages"]) {
-        for (var component in page["components"]) {
-          pages.add(component);
-        }
-      }
-      currentDiaryInfo["pages"] = pages;
-      print(currentDiaryInfo["pages"]);
+    db.collection("Diarys").doc(currentDiaryId).get().then((d) {
+      currentDiaryInfo["title"] = d["title"];
+      currentDiaryInfo["pages"] = d["pages"];
     });
   }
 
   static void createNewDiary() {
-    currentDiaryInfo["userid"] = userId;
-    db.collection("Diarys").add(currentDiaryInfo).then((value) {
-      token = value.id;
+    var emptyDiary = {
+      "title": "",
+      "coverid": "",
+      "pages": [],
+      "userid": userId,
+      "id": "",
+      "index": -1,
+      "password": null,
+      "bookmarked": false
+    };
+    db.collection("Diarys").add(emptyDiary).then((value) {
+      currentDiaryId = value.id;
+      currentDiaryInfo = {"title": "", "pages": []};
       db.collection("Users").doc(userId).update({
-        "diarys": FieldValue.arrayUnion([token])
+        "diarys": FieldValue.arrayUnion([value.id])
       });
     });
   }
