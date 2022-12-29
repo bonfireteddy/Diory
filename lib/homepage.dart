@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diory_project/diary_setting.dart';
 import 'package:diory_project/diary_readingview.dart';
+import 'package:diory_project/edit_page.dart';
+import 'package:diory_project/store.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -170,6 +172,8 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                                               'assets/images/coverImages/default.png'))),
                                 ),
                                 onTap: () {
+                                  // Store.currentDiaryId = bookmarkedDiaryList.elementAt(index)";
+                                  ItemController.setPages();
                                   passwordCheck(
                                       context,
                                       bookmarkedDiaryList.elementAt(index),

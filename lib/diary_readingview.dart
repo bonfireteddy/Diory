@@ -1,6 +1,7 @@
 import 'package:diory_project/diary_showlist.dart';
 import 'package:diory_project/edit_page.dart';
 import 'package:diory_project/selectTemplate.dart';
+import 'package:diory_project/store.dart';
 import 'package:flutter/material.dart';
 
 class DiaryReadingView extends StatelessWidget {
@@ -23,7 +24,7 @@ class _DiaryPageViewState extends State<DiaryPageView> {
   List _pageList = [];
   @override
   Widget build(BuildContext context) {
-    _pageList = /*diaryList.elementAt(widget.diaryIndex)['pages'] ??*/ [];
+    _pageList = Store.currentDiaryInfo["pages"];
     _currentPageIndex = _currentPageIndex ?? _pageList.length - 1;
     PageController _pageController =
         PageController(initialPage: _currentPageIndex!);
@@ -116,7 +117,8 @@ class _DiaryPageViewState extends State<DiaryPageView> {
                     child: _pageList.isNotEmpty
                         ? PageView.builder(
                             controller: _pageController,
-                            itemCount: _pageList.length,
+                            // itemCount: _pageList.length,
+                            itemCount: ItemController.pages.length,
                             itemBuilder: (context, index) {
                               return Container(
                                 color: Colors.blue,
@@ -126,10 +128,7 @@ class _DiaryPageViewState extends State<DiaryPageView> {
                                 height:
                                     MediaQuery.of(context).size.width * 0.80 +
                                         20,
-                                child: Text(
-                                  '$index',
-                                  style: TextStyle(fontSize: 100),
-                                ),
+                                child: ItemController.pages[index],
                               );
                             },
                             onPageChanged: (value) {

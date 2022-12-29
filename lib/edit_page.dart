@@ -14,23 +14,45 @@ class ItemController {
 
   static List<Stack> pages = <Stack>[];
 
-  static void setPages() {
+  static void setPages() async {
+    pages = <Stack>[];
     int i = 0;
-    for (var page
-        in Store.currentDiaryInfo["pages"]) {} //페이지를 스택으로 모두 저장 (스택만 보여주기)
-    pages.add(Stack(children: [
-      ImageStickers(
-        backgroundImage: const AssetImage("assets/stickers/white_page.png"),
-        stickerList: ItemController.stickerItems,
-        stickerControlsStyle: ImageStickersControlsStyle(
-            color: Colors.blueGrey,
-            child: const Icon(
-              Icons.zoom_out_map,
-              color: Colors.white,
-            )),
-      ),
-      for (var item in ItemController.textItems) item,
-    ]));
+    await Store.getPost();
+    for (var data in Store.currentDiaryInfo["pages"]) {
+      List<WriteText> textItems = <WriteText>[];
+      List<UISticker> stickerItems = <UISticker>[];
+      if (data["components"].length > 0) {
+        for (var page in data["components"]) {
+          if (page["type"] == "Text") {
+            try {
+              textItems.add(WriteText(id: i++, text: "test", dx: 100, dy: 100));
+            } catch (e) {}
+          } else if (page["type"] == "Sticker") {
+            stickerItems.add(UISticker(
+                imageProvider: AssetImage(page["stickerId"]),
+                x: page["x"],
+                y: page["y"],
+                size: page["size"],
+                angle: page["angle"],
+                editable: false));
+          }
+        }
+      }
+
+      pages.add(Stack(children: [
+        ImageStickers(
+          backgroundImage: const AssetImage("assets/stickers/white_page.png"),
+          stickerList: stickerItems,
+          stickerControlsStyle: ImageStickersControlsStyle(
+              color: Colors.blueGrey,
+              child: const Icon(
+                Icons.zoom_out_map,
+                color: Colors.white,
+              )),
+        ),
+        for (var item in textItems) item,
+      ]));
+    }
   }
 
   static void update(int id, String text) {
