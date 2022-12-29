@@ -6,7 +6,6 @@ class WriteText extends StatefulWidget {
   String text;
   double dx;
   double dy;
-  bool isExist = true;
 
   WriteText(
       {Key? key,
@@ -114,9 +113,6 @@ class _WriteTextState extends State<WriteText> {
                               Navigator.of(context).pop();
                               ItemController.delete(widget.id);
                               parent.setState(() {});
-                              // setState(() {
-                              //   widget.isExist = false;
-                              // });
                             },
                           ),
                         ]),
