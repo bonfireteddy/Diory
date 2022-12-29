@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ToDo {
 
-  /*var result;
-      final firestore = FirebaseFirestore.instance;
+      /*var result;
+        final firestore = FirebaseFirestore.instance;
         getData() async {
         result = await firestore.collection('todo').doc('EDOPelBiJxbkZINj1RFY').get();
         print(result);
@@ -28,4 +28,4 @@ class ToDo {
         ToDo(id: '04', todoText: '회의', ),
       ];
       }
-      }
+}

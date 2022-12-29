@@ -32,7 +32,7 @@ class Login extends StatelessWidget {
           );
         }
 
-        return Home();
+        return const MyHomePage();
       },
     );
   }
