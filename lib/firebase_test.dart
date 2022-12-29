@@ -17,6 +17,7 @@ void writeDiary() {
     "userid": "BWBe0HQ2h50rhCCGtW9J",
     "pages": [
       {
+        "idx": 0,
         "components": [
           {
             "type": "Text",

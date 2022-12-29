@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'edit_page.dart';
 
 class WriteText extends StatefulWidget {
+  int id;
   String text;
   double dx;
   double dy;
 
-  WriteText({Key? key, required this.text, this.dx = 0.0, this.dy = 0.0})
+  WriteText(
+      {Key? key,
+      required this.id,
+      required this.text,
+      this.dx = 0.0,
+      this.dy = 0.0})
       : super(key: key);
 
   void setText(String text) {
@@ -40,6 +47,9 @@ class _WriteTextState extends State<WriteText> {
 
   @override
   Widget build(BuildContext context) {
+    MyEditPageState parent =
+        context.findAncestorStateOfType<MyEditPageState>()!;
+
     return Stack(
       children: <Widget>[
         Positioned(
@@ -68,37 +78,47 @@ class _WriteTextState extends State<WriteText> {
               onLongPress: () => showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)),
-                      title: Column(
-                        children: <Widget>[
-                          Text("Edit Text"),
-                        ],
-                      ),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          TextField(
-                            controller: _textController,
-                            keyboardType: TextInputType.multiline,
-                            minLines: 1,
-                            maxLines: null,
-                          ),
-                        ],
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text("확인"),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            setState(() {
-                              widget.text = _textController.text;
-                            });
-                          },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0)),
+                        title: Column(
+                          children: <Widget>[
+                            Text("Edit Text"),
+                          ],
                         ),
-                      ],
-                    ),
+                        content: Container(
+                          height: 150,
+                          width: 300,
+                          color: Color.fromARGB(0, 177, 177, 177),
+                        ),
+                        actions: <Widget>[
+                          TextField(
+                              controller: _textController,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null),
+                          TextButton(
+                            child: const Text('확인'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              ItemController.update(
+                                  widget.id, _textController.text);
+                              parent.setState(() {});
+                              setState(() {
+                                widget.text = _textController.text;
+                              });
+                            },
+                          ),
+                          TextButton(
+                            child: const Text(
+                              '삭제',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              ItemController.delete(widget.id);
+                              parent.setState(() {});
+                            },
+                          ),
+                        ]),
                   )),
         ),
       ],
