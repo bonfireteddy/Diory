@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diory_project/diary_setting.dart';
 import 'package:diory_project/diary_readingview.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'account_setprofile.dart';
 
 final bookmarkedDiaryList = diaryList;
 final FirebaseAuth userInfo = FirebaseAuth.instance;
+var nickname;
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -30,7 +32,19 @@ class MyHomePage extends StatelessWidget {
                     shape: const CircleBorder(),
                     child: AccountImageIcon(),
                     onPressed: () {
-                      Scaffold.of(context).openEndDrawer();
+                      // 현재 사용자 nickname 가져오기
+                      FirebaseFirestore.instance
+                          .collection('Users')
+                          .snapshots()
+                          .listen((event) {
+                            for(int i=0; i<event.size; i++) {
+                              if(event.docs[i]['email'] == userInfo.currentUser!.email) {
+                                nickname = event.docs[i]['username'];
+                                break;
+                              }
+                            }
+                            Scaffold.of(context).openEndDrawer();
+                      });
                     },
                   )),
         ],
@@ -218,6 +232,7 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
       print(e);
     }
   }
+
   //final String alias = '오리너구리'; //사용자 별명
   String? alias = userInfo.currentUser!.email;
   final String accountImageUrl =
@@ -241,7 +256,7 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
                       },
                     )),
             Text(
-              '$alias님',  // 닉네임이 아니라 이메일로 나옴->수정필요
+              '$nickname님',  // 닉네임이 아니라 이메일로 나옴->수정필요
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
             ),
             const Expanded(child: SizedBox()),
