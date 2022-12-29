@@ -8,16 +8,6 @@ import 'package:flutter/material.dart';
 var db = FirebaseFirestore.instance;
 
 class Store {
-  static var currentDiaryInfo = {
-    "title": "",
-    "coverid": 0,
-    "pages": [],
-    "userid": userId,
-    "id": currentDiaryId,
-    "index": -1,
-    "password": null,
-    "bookmarked": false
-  };
   static String userId = "YE7Fz6e0BfT6qHqujFuwhZByL5m2";
   static String currentDiaryId = "GrZSSShpj3vLvLstKT3R";
   static Map<String, dynamic> currentDiaryInfo = {"title": "", "pages": []};
@@ -85,6 +75,7 @@ class Store {
       currentDiaryInfo["pages"] = d["pages"];
     });
   }
+
   static void createNewDiary() {
     var emptyDiary = {
       "title": "",
