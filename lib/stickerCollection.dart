@@ -5,6 +5,5 @@ class AssetSticker {
     "assets/stickers/2.png",
     "assets/stickers/3.png",
     "assets/stickers/4.png",
-    "assets/stickers/5.png"
   ];
 }
