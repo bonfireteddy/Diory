@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'diary_showlist.dart';
 import 'account_setprofile.dart';
 
-final bookmarkedDiaryList = diaryList.where((e) => e['bookmarked']);
+final bookmarkedDiaryList = diaryList;
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -87,7 +87,7 @@ class HomeDiaryPageView extends StatefulWidget {
 
 class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
   int _currentPageIndex = 0;
-  PageController pageController = PageController(initialPage: 0);
+  PageController _pageController = PageController(initialPage: 0);
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -98,7 +98,7 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
           height: MediaQuery.of(context).size.height * 0.55,
           color: Colors.white,
           child: PageView.builder(
-            controller: pageController,
+            controller: _pageController,
             itemCount: bookmarkedDiaryList.length,
             itemBuilder: (context, index) {
               return Container(
@@ -160,7 +160,7 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                 },
                 onSelected: ((value) {
                   _currentPageIndex = value;
-                  pageController.animateToPage(_currentPageIndex,
+                  _pageController.animateToPage(_currentPageIndex,
                       duration: const Duration(microseconds: 500),
                       curve: Curves.easeIn);
                 }),
