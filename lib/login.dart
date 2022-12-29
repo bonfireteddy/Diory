@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/auth.dart';
 
 import 'homepage.dart';
+import 'todoHome.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key});
@@ -31,7 +32,7 @@ class Login extends StatelessWidget {
           );
         }
 
-        return const MyHomePage();
+        return Home();
       },
     );
   }

@@ -200,12 +200,13 @@ class _HomeState extends State<Home> {
       backgroundColor: tdBGColor,
       elevation: 0,
       title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Icon(
-          Icons.arrow_back,
-          color: tdBlack,
-          size: 30,
+        IconButton(
+            onPressed: () {
+              //나가는 순간 내용 저장
+            },
+            icon: Icon(Icons.arrow_back),
+            color: tdBlack,
         ),
-
       ]),
     );
   }
