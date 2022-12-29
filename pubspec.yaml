@@ -41,6 +41,7 @@ dependencies:
     cloud_firestore: ^4.3.0
     image_picker: ^0.8.6
     flutterfire_ui: ^0.4.3+20
+    image_stickers: ^0.0.4
 
 dev_dependencies:
     flutter_test:
@@ -75,6 +76,11 @@ flutter:
         - assets/images/
         - assets/images/coverImages/
         - assets/stickers/
+        - assets/stickers/ory_1.png
+        - assets/stickers/Ribone.png
+        - assets/stickers/tabaco.png
+        - assets/stickers/tears.png
+        - assets/stickers/white_page.png
 
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/assets-and-images/#resolution-aware
