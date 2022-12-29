@@ -12,11 +12,6 @@ class ItemController {
   static List<WriteText> textItems = <WriteText>[];
   static List<UISticker> stickerItems = <UISticker>[];
 
-  static void reload() {}
-  static void add(WriteText item) {
-    textItems.add(item);
-  }
-
   static void update(int id, String text) {
     int index = textItems.indexWhere((item) => item.id == id);
     if (index < 0) return;
@@ -223,7 +218,7 @@ class MyEditPageState extends State<MyEditPage> {
                     setState(() {
                       var writetext =
                           WriteText(id: ItemController.id, text: _text);
-                      ItemController.add(writetext);
+                      ItemController.textItems.add(writetext);
                       ItemController.id++;
                     });
                   }
@@ -248,35 +243,6 @@ class MyEditPageState extends State<MyEditPage> {
       builder: (BuildContext context) {
         return SizedBox(
             height: 400,
-            /*child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  for (var item in [0, 1, 2, 3]
-                      .map(
-                        (e) => InkWell(
-                          onTap: () {
-                            setState(() {
-                              ItemController.stickerItems.add(createSticker(
-                                  ItemController.stickerItems.length,
-                                  'assets/stickers/${e.toString()}.png'));
-                            });
-                          },
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: Image.asset(
-                                'assets/stickers/${e.toString()}.png'),
-                          ),
-                        ),
-                      )
-                      .toList())
-                    item
-                ],
-              ),
-            ],
-          ),*/
             child: GridView.builder(
               itemCount: AssetSticker.stickerIdx.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
