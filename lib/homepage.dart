@@ -6,8 +6,44 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'diary_showlist.dart';
 
+List users = [];
+
 final bookmarkedDiaryList = diaryList.where((e) => e['bookmarked']);
 final FirebaseAuth userInfo = FirebaseAuth.instance;
+
+final userprofile = userInfo.currentUser;
+final userUid = userInfo.currentUser!.uid;
+//final authData = FirebaseFirestore.instance.collection('Users').doc(userprofile!.uid);
+
+/*
+final authData = FirebaseFirestore.instance.collection('Users').get().then(
+    (QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        users.add(doc.data());
+      });
+    }
+);
+ */
+
+/*
+Test() async {
+  var alias;
+  final infoData = await authData.get().then((value) => print(alias=value['username'].toString()));
+  print(alias);
+  return alias;
+}
+ */
+
+/*
+var nickname = "";
+Future<String> getNickname() async {
+  final infoData = authData.get().then((value) => nickname = value['username']);
+  return nickname;
+}
+
+ */
+
+//final nickname = authData.get().then((value) => value['username']);
 
 class MyHomePage extends StatelessWidget {
   //final arguments;
@@ -203,15 +239,54 @@ class DrawerMenuBar extends StatefulWidget {
 }
 
 class _DrawerMenuBarState extends State<DrawerMenuBar> {
+  Future signOut() async {
+    try {
+      return await FirebaseAuth.instance.signOut();
+    } catch(e) {
+      print(e);
+    }
+  }
+  /*
+  Test() async {
+    final authData = await FirebaseFirestore.instance.collection('Users').get().then(
+            (QuerySnapshot querySnapshot) {
+          querySnapshot.docs.forEach((doc) {
+            users.add(doc.data());
+          });
+        }
+    );
+    final check = users.isEmpty;
+    return check;
+  }
+   */
   /*
   Future<void> inputData() async {
     final user = await userInfo.currentUser;
     final userUid = user!.uid;
   }
    */
+  //final userprofile = userInfo.currentUser;
+/*
+  FirebaseFirestore.instance.collection('Users').doc(userprofile!.uid).update({
+  "username" : _usernameController.text,
+  });
+ */
+  //final userUid = userInfo.currentUser!.uid;
+  //int index = users.forEach((element) { });
+  //String alias = users[]
+  //String alias = "";
+  //Future nickname = Test();
 
-  final userUid = userInfo.currentUser!.uid;
-  final String? alias = userInfo.currentUser!.email;
+  //final nickname = Test();
+  String? alias = userInfo.currentUser!.email;
+
+  //var nickname = 0;
+  //String alias = "";
+  //final infoData = authData.get().then((value) => alias=value['username'].toString());
+
+  //var alias = getNickname();
+  //final nickname = "";
+  //final nickname = Test().isEmpty;
 
   //final String alias = '오리너구리'; //사용자 별명
   final String accountImageUrl =
@@ -235,7 +310,7 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
                       },
                     )),
             Text(
-              '$alias님',
+              '$alias님', // 닉네임이 아니라 이메일로 나옴->수정필요..
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
             ),
             const Expanded(child: SizedBox()),
@@ -303,6 +378,19 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
           ),
           title: Text('튜토리얼 다시보기', style: TextStyle(fontSize: 16)),
           onTap: null,
+        ),
+        Container(  // 로그아웃 기능
+          width: 60,
+          height: 100,
+          alignment: Alignment.bottomCenter,
+          child: TextButton(
+            style: TextButton.styleFrom(primary: Colors.grey),
+            child: Text('Logout'),
+            onPressed: () {
+              signOut();
+              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+            }
+          ),
         ),
       ]),
     );

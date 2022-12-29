@@ -1,3 +1,4 @@
+import 'package:diory_project/setProfile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,9 +20,21 @@ class _JoinPageState extends State<JoinPage> {
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       decoration: const InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: '이메일',
-      ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+        ),
+        contentPadding: const EdgeInsets.only(left: 30.0, right: 30.0),
+        labelText: 'Email',
+        floatingLabelStyle: TextStyle(
+          color: Colors.yellow,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.yellow,
+            ),
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+          ),
+        ),
       validator: (String? value){
         if (value!.isEmpty) {// == null or isEmpty
           return '이메일을 입력해주세요.';
@@ -37,8 +50,20 @@ class _JoinPageState extends State<JoinPage> {
       obscureText: true,
       keyboardType: TextInputType.number,
       decoration: const InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: '비밀번호',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+        ),
+        contentPadding: const EdgeInsets.only(left: 30.0, right: 30.0),
+        labelText: 'Password',
+        floatingLabelStyle: TextStyle(
+          color: Colors.yellow,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.yellow,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+        ),
       ),
       validator: (String? value){
         if (value!.isEmpty) {// == null or isEmpty
@@ -54,7 +79,7 @@ class _JoinPageState extends State<JoinPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text("회원가입"),
+        title: const Text("Register"),
         centerTitle: true,
       ),
       body: Form(
@@ -63,18 +88,22 @@ class _JoinPageState extends State<JoinPage> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              //Image(width: 400.0, height: 250.0, image: AssetImage(_imageFile)),
               const SizedBox(height: 20.0),
               _userIdWidget(),
               const SizedBox(height: 20.0),
               _passwordWidget(),
               Container(
                 height: 70,
-                width: double.infinity,
-                padding: const EdgeInsets.only(top: 8.0), // 8단위 배수가 보기 좋음
+                padding: const EdgeInsets.only(top: 20.0),
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    primary: Colors.yellow[600],
+                  ),
                     onPressed: () => _join(),
-                    child: const Text("회원가입")
+                    child: const Text("register")
                 ),
               ),
               const SizedBox(height: 20.0),
@@ -118,7 +147,18 @@ class _JoinPageState extends State<JoinPage> {
 
         await FirebaseFirestore.instance.collection('Users').doc(r.user!.uid).set({
           'email': r.user!.email,
+          'username' : null,
         });
+
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SetProfile()),
+        );
 
         //Get.offAll(() => const MarketPage());
       } catch (e) {
