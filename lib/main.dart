@@ -8,9 +8,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'edit_page.dart';
 import 'homepage.dart';
 import 'selectTemplate.dart';
+import 'package:diory_project/edit_page.dart';
 import 'firebase_test.dart';
 import 'login.dart';
 import 'package:diory_project/edit_page.dart';
+import 'package:flutter/services.dart';
+import 'todoHome.dart';
 
 const clientId = 'YOUR_CLIENT_ID';
 
@@ -54,9 +57,7 @@ class MyApp extends StatelessWidget {
             elevation: 0,
           ),
           textTheme: const TextTheme()),
-      home: const MyEditPage(
-        title: "asd",
-      ), //여기에서 처음에는 로그인 및 회원가입 화면으로, 이후 로그인상태에서는 홈화면으로 이동
+      home: const LoginPage(), //여기에서 처음에는 로그인 및 회원가입 화면으로, 이후 로그인상태에서는 홈화면으로 이동
     );
   }
 }

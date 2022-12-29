@@ -1,15 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diory_project/diary_setting.dart';
 import 'package:diory_project/diary_readingview.dart';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
-import 'dart:math';
 
+//List diaryList = [];
 List diaryList = [
   {
     'image': 'assets/images/coverImages/0.png',
     'title': 'My Diary 1',
     'password': 'qwer',
     'bookmarked': true,
+    'pages': [
+      {'components': []},
+      {'components': []},
+      {'components': []},
+    ],
   },
   {
     'image': 'assets/images/coverImages/1.png',
@@ -174,6 +180,14 @@ class ListGridView extends StatefulWidget {
 class _ListGridViewState extends State<ListGridView> {
   @override
   Widget build(BuildContext context) {
+    FirebaseFirestore.instance.collection('Diarys')
+      ..orderBy('index').get().then((QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+          diaryList.add(doc.data());
+        });
+      });
+    print('got from firebase');
+
     return Container(
         child: GridView.builder(
             itemCount: diaryList.length + 1,
@@ -194,7 +208,6 @@ class _ListGridViewState extends State<ListGridView> {
                     int largerIndex = toIndex > fromIndex ? toIndex : fromIndex;
                     int smallerIndex =
                         toIndex < fromIndex ? toIndex : fromIndex;
-                    //print('from$fromIndex to$toIndex');
                     setState(() {
                       diaryList.insert(
                           smallerIndex, diaryList.removeAt(largerIndex));
@@ -239,7 +252,7 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
                   },
                   onTap: () {
                     passwordCheck(context, widget.listIndex, diaryList,
-                        DiaryReadingView(index: widget.listIndex));
+                        DiaryReadingView(diaryIndex: widget.listIndex));
                   },
                 )),
                 feedback: Material(
@@ -258,7 +271,8 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
                 children: [
                   Expanded(
                       child: Text(
-                    diaryList.elementAt(widget.listIndex)['title'],
+                    diaryList.elementAt(widget.listIndex)['title'] ??
+                        'tempTitle',
                     softWrap: false,
                     overflow: TextOverflow.clip,
                   )),
@@ -310,8 +324,9 @@ Widget diaryCover(context, int index) {
                 offset: const Offset(0, 3))
           ],
           image: DecorationImage(
-              image: AssetImage(diaryList.elementAt(index)['image'] ??
-                  'assets/images/coverImages/default.png'))),
+              image: NetworkImage('${diaryList.elementAt(index)['image']}')
+              //image: AssetImage('assets/images/coverImages/default.png')
+              )),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

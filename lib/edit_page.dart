@@ -52,7 +52,7 @@ class ItemController {
 }
 
 class EditPage extends StatelessWidget {
-  const EditPage({Key? key}) : super(key: key);
+  const EditPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -69,9 +69,9 @@ class EditPage extends StatelessWidget {
 }
 
 class MyEditPage extends StatefulWidget {
-  const MyEditPage({super.key, required this.title});
-
-  final String title;
+  final int diaryIndex;
+  final int pageIndex;
+  MyEditPage({super.key, required this.diaryIndex, required this.pageIndex});
 
   @override
   State<MyEditPage> createState() => MyEditPageState();
@@ -92,7 +92,7 @@ class MyEditPageState extends State<MyEditPage> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 60,
-        title: Text(widget.title),
+        title: Text('${widget.pageIndex == -1 ? 'new page' : 'edit page'}'),
         centerTitle: true,
         // 중앙 정렬
         elevation: 0.0,
