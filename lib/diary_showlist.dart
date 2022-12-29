@@ -180,14 +180,12 @@ class ListGridView extends StatefulWidget {
 class _ListGridViewState extends State<ListGridView> {
   @override
   Widget build(BuildContext context) {
-    FirebaseFirestore.instance
-        .collection('Diarys')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
-        diaryList.add(doc.data());
+    FirebaseFirestore.instance.collection('Diarys')
+      ..orderBy('index').get().then((QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+          diaryList.add(doc.data());
+        });
       });
-    });
     print('got from firebase');
 
     return Container(

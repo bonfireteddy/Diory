@@ -244,25 +244,27 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
                   image: DecorationImage(
                       image: AssetImage(accountImageUrl), fit: BoxFit.fill),
                 )),
-            Container(
-              width: 60,
-              height: 100,
-              alignment: Alignment.bottomLeft,
-              child: IconButton(
-                  icon: const Icon(
-                    Icons.settings,
-                    color: Colors.black,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AccountSetProfile()));
-                  }),
-            ),
+            const SizedBox(width: 50)
           ],
         ),
-        const SizedBox(height: 40.0),
+        const SizedBox(height: 30.0),
+        const Divider(
+            height: 20,
+            thickness: 1.5,
+            indent: 20,
+            endIndent: 30,
+            color: Color(0xffFCD2D2)),
+        ListTile(
+          leading: Icon(
+            Icons.account_box,
+            color: Colors.black,
+          ),
+          title: Text('계정 관리', style: TextStyle(fontSize: 16)),
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => AccountSetProfile()));
+          },
+        ),
         const Divider(
             height: 20,
             thickness: 1.5,
@@ -285,6 +287,26 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
             color: Color(0xffFCD2D2)),
         const ListTile(
           leading: Icon(
+            Icons.logout,
+            color: Colors.black,
+          ),
+          title: Text('로그아웃', style: TextStyle(fontSize: 16)),
+          onTap: null,
+        ),
+        const Divider(
+            height: 20,
+            thickness: 1.5,
+            indent: 20,
+            endIndent: 30,
+            color: Color(0xffFCD2D2)),
+        const Divider(
+            height: 20,
+            thickness: 1.5,
+            indent: 20,
+            endIndent: 30,
+            color: Color(0xffFCD2D2)),
+        const ListTile(
+          leading: Icon(
             Icons.storefront,
             color: Colors.black,
           ),
@@ -297,42 +319,6 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
             indent: 20,
             endIndent: 30,
             color: Color(0xffFCD2D2)),
-        const ListTile(
-          leading: Icon(
-            Icons.play_lesson_rounded,
-            color: Colors.black,
-          ),
-          title: Text('튜토리얼 다시보기', style: TextStyle(fontSize: 16)),
-          onTap: null,
-        ),
-        const Divider(
-            height: 20,
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 30,
-            color: Color(0xffFCD2D2)),
-        const ListTile(
-          leading: Icon(
-            Icons.account_box,
-            color: Colors.black,
-          ),
-          title: Text('계정 관리', style: TextStyle(fontSize: 16)),
-          onTap: null,
-        ),
-        const Divider(
-            height: 20,
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 30,
-            color: Color(0xffFCD2D2)),
-        const ListTile(
-          leading: Icon(
-            Icons.logout,
-            color: Colors.black,
-          ),
-          title: Text('로그아웃', style: TextStyle(fontSize: 16)),
-          onTap: null,
-        ),
       ]),
     );
   }
@@ -360,7 +346,6 @@ Widget diaryMenuButton(context, double size, int index) {
                 '다이어리 삭제',
                 style: TextStyle(color: Colors.red),
               ),
-              onTap: null,
             ),
           ]),
       onSelected: (value) {
@@ -370,6 +355,34 @@ Widget diaryMenuButton(context, double size, int index) {
                 context, index, diaryList, EditDiarySetting(index: index));
             break;
           case 1:
+            showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                        icon: Icon(
+                          Icons.warning,
+                          color: Colors.red,
+                          size: 50,
+                        ),
+                        content: Text(
+                          '정말로....\n${bookmarkedDiaryList.elementAt(index)['title']} 다이어리를\n영원히 삭제할까요....?',
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              backgroundColor: Colors.yellow),
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                //데이터베이스에서 다이어리 삭제하기
+                                Navigator.pop(context);
+                              },
+                              child: const Text('그러세요')),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('아직좀더생각해봄'))
+                        ]));
             break;
         }
       },
