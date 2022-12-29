@@ -1,5 +1,4 @@
 import 'package:diory_project/page.dart';
-import 'package:diory_project/write_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'firebase_options.dart';
@@ -7,7 +6,6 @@ import 'homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'selectTemplate.dart';
-import 'write_text_page.dart';
 import 'package:diory_project/edit_page.dart';
 import 'firebase_test.dart';
 import 'login.dart';
