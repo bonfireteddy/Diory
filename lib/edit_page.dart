@@ -337,7 +337,7 @@ class MyEditPageState extends State<MyEditPage> {
             height: 400,
             child: GridView.builder(
               itemCount: AssetSticker.stickerIdx.length,
-              gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
                 childAspectRatio: 1.0,
               ),
