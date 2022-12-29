@@ -35,12 +35,12 @@ class Store {
     db.collection("Diarys").doc(diaryId).update(data);
   }
 
-  static void getPost() async {
+  static void getPost() {
     String diaryId = "GrZSSShpj3vLvLstKT3R";
     var data = currentDiaryInfo;
     // db.collection("Diarys").where(diaryId).get().then((value) => print(value));
     db.collection("Diarys").doc(diaryId).get().then((d) {
-      print(d.data());
+      print(d["pages"][0]["components"]);
     });
   }
 }
