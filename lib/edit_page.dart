@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class EditPage extends StatelessWidget {
-  const EditPage({Key? key}) : super(key: key);
+  const EditPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +21,9 @@ class EditPage extends StatelessWidget {
 }
 
 class MyEditPage extends StatefulWidget {
-  const MyEditPage({super.key, required this.title});
-
-  final String title;
+  final int diaryIndex;
+  final int pageIndex;
+  MyEditPage({super.key, required this.diaryIndex, required this.pageIndex});
 
   @override
   State<MyEditPage> createState() => _MyEditPageState();
@@ -36,7 +36,7 @@ class _MyEditPageState extends State<MyEditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('${widget.pageIndex == -1 ? 'new page' : 'edit page'}'),
         centerTitle: true,
         // 중앙 정렬
         elevation: 0.0,
