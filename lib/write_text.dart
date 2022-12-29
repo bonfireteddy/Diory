@@ -91,7 +91,10 @@ class _WriteTextState extends State<WriteText> {
                           color: Color.fromARGB(0, 177, 177, 177),
                         ),
                         actions: <Widget>[
-                          TextField(controller: _textController),
+                          TextField(
+                              controller: _textController,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null),
                           TextButton(
                             child: const Text('확인'),
                             onPressed: () {

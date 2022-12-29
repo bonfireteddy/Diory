@@ -1,7 +1,9 @@
+import 'package:diory_project/diary_setting.dart';
 import 'package:diory_project/diary_readingview.dart';
 import 'package:flutter/material.dart';
 
 import 'diary_showlist.dart';
+import 'account_setprofile.dart';
 
 final bookmarkedDiaryList = diaryList.where((e) => e['bookmarked']);
 
@@ -41,21 +43,30 @@ class MyHomePage extends StatelessWidget {
                 children: [
                   Expanded(
                     flex: 1,
-                    child: Container(
-                      padding: const EdgeInsets.only(bottom: 2),
-                      alignment: Alignment.bottomRight,
-                      child: IconButton(
-                        constraints: const BoxConstraints(),
-                        padding: EdgeInsets.zero,
-                        icon: const Icon(Icons.list),
-                        iconSize: 32,
-                        onPressed: (() {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DiaryShowList()));
-                        }),
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const Icon(
+                          Icons.star_rate_rounded,
+                          color: Colors.amber,
+                        ),
+                        const Text('bookmarked diaries',
+                            style: TextStyle(fontSize: 18)),
+                        const Expanded(child: SizedBox()),
+                        IconButton(
+                          constraints: const BoxConstraints(),
+                          padding: EdgeInsets.zero,
+                          icon: const Icon(Icons.list),
+                          iconSize: 32,
+                          onPressed: (() {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DiaryShowList()));
+                          }),
+                        )
+                      ],
                     ),
                   ),
                   const Expanded(flex: 8, child: HomeDiaryPageView()),
@@ -111,7 +122,8 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                                   'assets/images/coverImages/default.png'))),
                     ),
                     onTap: () {
-                      passwordCheck(context, index, bookmarkedDiaryList);
+                      passwordCheck(context, index, bookmarkedDiaryList,
+                          DiaryReadingView(index: index));
                     },
                   )));
             },
@@ -158,7 +170,7 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                 ),
               ),
             ),
-            diaryMenuButton(30)
+            diaryMenuButton(context, 30, _currentPageIndex)
           ],
         )
       ],
@@ -212,14 +224,14 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
           children: [
             Builder(
                 builder: (context) => IconButton(
-                      icon: const Icon(Icons.arrow_right_rounded),
-                      iconSize: 40,
+                      icon: const Icon(Icons.arrow_back),
+                      iconSize: 32,
                       onPressed: () {
                         Scaffold.of(context).closeEndDrawer();
                       },
                     )),
             Text(
-              '$alias님',
+              '\t$alias님',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
             ),
             const Expanded(child: SizedBox()),
@@ -237,11 +249,16 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
               height: 100,
               alignment: Alignment.bottomLeft,
               child: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.settings,
                     color: Colors.black,
                   ),
-                  onPressed: null),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AccountSetProfile()));
+                  }),
             ),
           ],
         ),
@@ -288,12 +305,40 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
           title: Text('튜토리얼 다시보기', style: TextStyle(fontSize: 16)),
           onTap: null,
         ),
+        const Divider(
+            height: 20,
+            thickness: 1.5,
+            indent: 20,
+            endIndent: 30,
+            color: Color(0xffFCD2D2)),
+        const ListTile(
+          leading: Icon(
+            Icons.account_box,
+            color: Colors.black,
+          ),
+          title: Text('계정 관리', style: TextStyle(fontSize: 16)),
+          onTap: null,
+        ),
+        const Divider(
+            height: 20,
+            thickness: 1.5,
+            indent: 20,
+            endIndent: 30,
+            color: Color(0xffFCD2D2)),
+        const ListTile(
+          leading: Icon(
+            Icons.logout,
+            color: Colors.black,
+          ),
+          title: Text('로그아웃', style: TextStyle(fontSize: 16)),
+          onTap: null,
+        ),
       ]),
     );
   }
 }
 
-Widget diaryMenuButton(double size) {
+Widget diaryMenuButton(context, double size, int index) {
   return SizedBox(
     height: size < 30 ? 30 : size,
     width: size < 30 ? 30 : size,
@@ -306,32 +351,39 @@ Widget diaryMenuButton(double size) {
       iconSize: size,
       itemBuilder: ((context) => [
             PopupMenuItem(
-              child: Text('표지 바꾸기'),
-              onTap: null,
+              value: 0,
+              child: const Text('표지·제목·잠금 설정'),
             ),
             PopupMenuItem(
-              child: Text('잠금 설정'),
-              onTap: null,
-            ),
-            PopupMenuItem(
-              child: Text(
+              value: 1,
+              child: const Text(
                 '다이어리 삭제',
                 style: TextStyle(color: Colors.red),
               ),
               onTap: null,
             ),
           ]),
+      onSelected: (value) {
+        switch (value) {
+          case 0:
+            passwordCheck(
+                context, index, diaryList, EditDiarySetting(index: index));
+            break;
+          case 1:
+            break;
+        }
+      },
     ),
   );
 }
 
-void passwordCheck(context, int index, diaryList) {
+void passwordCheck(context, int index, diaryList, route) {
   String? password = diaryList.elementAt(index)['password'];
   if (password == null) {
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => DiaryReadingView(index: index),
+          builder: (context) => route,
         ));
     return;
   }
@@ -359,7 +411,7 @@ void passwordCheck(context, int index, diaryList) {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DiaryReadingView(index: index),
+                      builder: (context) => route,
                     ));
               } else {
                 Navigator.pop(context);

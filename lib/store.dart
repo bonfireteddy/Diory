@@ -56,7 +56,7 @@ class Store {
           WriteText(id: i++, text: page["text"], dx: page["x"], dy: page["y"]));
       print(page);
     }
-    ItemController.items = pageItems;
+    ItemController.textItems = pageItems;
   }
 
   static void getDiaryPages() {

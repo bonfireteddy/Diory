@@ -1,30 +1,34 @@
 import 'package:diory_project/write_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:image_stickers/image_stickers.dart';
+import 'package:image_stickers/image_stickers_controls_style.dart';
 import 'store.dart';
 
 class ItemController {
   static int id = 0;
-  static List<WriteText> items = <WriteText>[];
+  static List<WriteText> textItems = <WriteText>[];
+  static List<UISticker> stickerItems = <UISticker>[];
+
   static void reload() {}
   static void add(WriteText item) {
-    items.add(item);
+    textItems.add(item);
   }
 
   static void update(int id, String text) {
-    int index = items.indexWhere((item) => item.id == id);
+    int index = textItems.indexWhere((item) => item.id == id);
     if (index < 0) return;
-    items[index].text = text;
+    textItems[index].text = text;
   }
 
   static void delete(int id) {
-    items.removeWhere((item) => item.id == id);
+    textItems.removeWhere((item) => item.id == id);
   }
 
   static void setPage(int idx) {
     var pageData = {"idx": idx, "components": []};
     var temp = [];
-    for (var item in ItemController.items) {
+    for (var item in ItemController.textItems) {
       temp.add({
         "type": "Text",
         "text": item.text,
@@ -32,6 +36,16 @@ class ItemController {
         "y": item.dy,
       });
     }
+    for (var item in ItemController.stickerItems) {
+      temp.add({
+        "type": "Sticker",
+        "x": item.x,
+        "y": item.y,
+        "angle": item.angle,
+        "size": item.size
+      });
+    }
+
     pageData["components"] = temp;
     Store.setPage(idx, pageData);
     Store.setDiary();
@@ -66,6 +80,15 @@ class MyEditPage extends StatefulWidget {
 }
 
 class MyEditPageState extends State<MyEditPage> {
+  final _items = <Widget>[];
+  List<UISticker> stickers = [];
+
+  UISticker createSticker(int index, String s) {
+    return UISticker(
+        imageProvider: AssetImage(s), x: 100, y: 360, editable: true);
+  }
+
+  // 여기까지 스티커 나오게 하는 UIsticker--------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,6 +100,7 @@ class MyEditPageState extends State<MyEditPage> {
         elevation: 0.0,
         // 앱바 밑에 내려오는 그림자 조절 가능
         backgroundColor: Colors.white,
+
         actions: [
           IconButton(
               onPressed: () => ItemController.setPage(0),
@@ -87,36 +111,39 @@ class MyEditPageState extends State<MyEditPage> {
                 setState(() {});
               },
               icon: const Icon(Icons.refresh)),
+          IconButton(
+              onPressed: () {
+                bool state = (ItemController.stickerItems.length > 0)
+                    ? ItemController.stickerItems[0].editable
+                    : true;
+                ItemController.stickerItems.forEach((sticker) {
+                  sticker.editable = !state;
+                  setState(() {});
+                });
+              },
+              icon: const Icon(Icons.check))
         ],
       ),
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text('Drawer Header'),
-            ),
-            ListTile(
-              title: const Text('Item1'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
+      body: Stack(children: [
+        ImageStickers(
+          backgroundImage: const AssetImage("assets/stickers/white_page.png"),
+          stickerList: ItemController.stickerItems,
+          stickerControlsStyle: ImageStickersControlsStyle(
+              color: Colors.blueGrey,
+              child: const Icon(
+                Icons.zoom_out_map,
+                color: Colors.white,
+              )),
         ),
-      ),
-      // ------------------------------------------------------
-
-      body: Stack(children: [for (var item in ItemController.items) item]),
-
-      // ---------------------------------------------------------
-
+        for (var item in ItemController.textItems) item,
+      ]),
       floatingActionButton: SpeedDial(
         icon: Icons.add,
         activeIcon: Icons.close,
+        overlayColor: Colors.grey,
+        overlayOpacity: 0.5,
+        //animatedIcon: AnimatedIcons.menu_close, -> 기본아이콘이 햄버거로 정해져있음.
+
         children: [
           SpeedDialChild(
             child: Icon(Icons.text_fields),
@@ -125,7 +152,21 @@ class MyEditPageState extends State<MyEditPage> {
               addText();
             },
           ),
-          SpeedDialChild(child: Icon(Icons.emoji_emotions), label: 'sticker'),
+          SpeedDialChild(
+            child: Icon(Icons.emoji_emotions),
+            label: 'sticker',
+            onTap: () {
+              /////------------------스티커 추가기능
+              show_sticker_menu();
+            },
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.undo),
+            label: 'undo',
+            onTap: () {
+              undo();
+            },
+          ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
@@ -163,7 +204,12 @@ class MyEditPageState extends State<MyEditPage> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[TextField(controller: _textEditingController)],
+              children: <Widget>[
+                TextField(
+                    controller: _textEditingController,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null)
+              ],
             ),
             actions: <Widget>[
               TextButton(
@@ -190,5 +236,60 @@ class MyEditPageState extends State<MyEditPage> {
             ],
           );
         });
+  }
+
+  void show_sticker_menu() {
+    showModalBottomSheet(
+      // bottom sheet
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: 400,
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  for (var item in [0, 1, 2, 3]
+                      .map(
+                        (e) => InkWell(
+                          onTap: () {
+                            setState(() {
+                              ItemController.stickerItems.add(createSticker(
+                                  ItemController.stickerItems.length,
+                                  'assets/stickers/${e.toString()}.png'));
+                            });
+                          },
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: Image.asset(
+                                'assets/stickers/${e.toString()}.png'),
+                          ),
+                        ),
+                      )
+                      .toList())
+                    item
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void clear() {
+    for (int i = _items.length - 1; i >= 0; i--) {
+      setState(() {
+        _items.removeAt(i);
+      });
+    }
+  }
+
+  void undo() {
+    setState(() {
+      if (!_items.isEmpty) _items.removeAt(_items.length - 1);
+    });
   }
 }

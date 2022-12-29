@@ -10,7 +10,7 @@ import 'homepage.dart';
 import 'selectTemplate.dart';
 import 'firebase_test.dart';
 import 'login.dart';
-import 'package:diory_project/edit_page.dart' as edit;
+import 'package:diory_project/edit_page.dart';
 
 const clientId = 'YOUR_CLIENT_ID';
 
