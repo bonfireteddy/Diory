@@ -247,181 +247,30 @@ class MyEditPageState extends State<MyEditPage> {
           height: 400,
           child: Column(
             children: [
-              Expanded(
-                child: Row(
-                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          InkWell(
-                            // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
-                            onTap: () {
-                              setState(() {
-                                ItemController.stickerItems.add(createSticker(
-                                    ItemController.stickerItems.length,
-                                    "assets/stickers/ory_1.png"));
-                              });
-                            },
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/stickers/ory_1.png'),
-                            ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  for (var item in [0, 1, 2, 3]
+                      .map(
+                        (e) => InkWell(
+                          onTap: () {
+                            setState(() {
+                              ItemController.stickerItems.add(createSticker(
+                                  ItemController.stickerItems.length,
+                                  'assets/stickers/${e.toString()}.png'));
+                            });
+                          },
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: Image.asset(
+                                'assets/stickers/${e.toString()}.png'),
                           ),
-                          InkWell(
-                            // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
-                            onTap: () {
-                              setState(() {
-                                ItemController.stickerItems.add(createSticker(
-                                    ItemController.stickerItems.length,
-                                    'assets/stickers/Ribone.png'));
-                              });
-                            },
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/stickers/Ribone.png'),
-                            ),
-                          ),
-                          InkWell(
-                            // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
-                            onTap: () {
-                              setState(() {
-                                ItemController.stickerItems.add(createSticker(
-                                    ItemController.stickerItems.length,
-                                    'assets/stickers/tabaco.png'));
-                              });
-                            },
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/stickers/tabaco.png'),
-                            ),
-                          ),
-                          InkWell(
-                            // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
-                            onTap: () {
-                              setState(() {
-                                ItemController.stickerItems.add(createSticker(
-                                    ItemController.stickerItems.length,
-                                    'assets/stickers/tears.png'));
-                              });
-                            },
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/stickers/tears.png'),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // 1줄 ------------------------------------------
-              Expanded(
-                child: Row(
-                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          InkWell(
-                            // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
-                            onTap: () {},
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/ory_1.png'),
-                            ),
-                          ),
-                          InkWell(
-                            // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
-                            onTap: () {},
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/ory_1.png'),
-                            ),
-                          ),
-                          InkWell(
-                            // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
-                            onTap: () {},
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/ory_1.png'),
-                            ),
-                          ),
-                          InkWell(
-                            // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
-                            onTap: () {},
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/ory_1.png'),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Row(
-                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          InkWell(
-                            // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
-                            onTap: () {},
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/ory_1.png'),
-                            ),
-                          ),
-                          InkWell(
-                            // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
-                            onTap: () {},
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/ory_1.png'),
-                            ),
-                          ),
-                          InkWell(
-                            // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
-                            onTap: () {},
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/ory_1.png'),
-                            ),
-                          ),
-                          InkWell(
-                            // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
-                            onTap: () {},
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/ory_1.png'),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                        ),
+                      )
+                      .toList())
+                    item
+                ],
               ),
             ],
           ),
