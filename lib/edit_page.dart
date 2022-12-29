@@ -70,10 +70,6 @@ class MyEditPage extends StatefulWidget {
 class MyEditPageState extends State<MyEditPage> {
   final _items = <Widget>[];
   List<UISticker> stickers = [];
-  @override
-  void initState() {
-    stickers.add(createSticker(0, "assets/stickers/Ribone.png"));
-  }
 
   UISticker createSticker(int index, String s) {
     return UISticker(
@@ -93,17 +89,6 @@ class MyEditPageState extends State<MyEditPage> {
         // 앱바 밑에 내려오는 그림자 조절 가능
         backgroundColor: Colors.white,
 
-        // 텍스트 필드 누르면 키보드가 올라옴과 동시에 우측 상단 햄버거 메뉴가
-        // 완료 TextButton으로 바뀌고 완료를 누르면 키보드가 내려가게 하는 이벤트
-        actions: [
-          if (MediaQuery.of(context).viewInsets.bottom > 0)
-            TextButton(
-              onPressed: FocusManager.instance.primaryFocus?.unfocus,
-              child: Text('완료', style: TextStyle(color: Colors.white)),
-            ),
-          IconButton(
-              onPressed: () {
-/*
         actions: [
           IconButton(
               onPressed: () => ItemController.setPage(0),
@@ -116,52 +101,19 @@ class MyEditPageState extends State<MyEditPage> {
               icon: const Icon(Icons.refresh))
         ],
       ),
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text('Drawer Header'),
-            ),
-            ListTile(
-              title: const Text('Item1'),
-              onTap: () {
-*/
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.check))
-        ],
-      ),
-
-      body: Column(
-        children: [
-          Expanded(
-              flex: 30,
-              child: Container(
-                child: ImageStickers(
-                  backgroundImage:
-                      const AssetImage("assets/stickers/white_page.png"),
-                  stickerList: stickers,
-                  stickerControlsStyle: ImageStickersControlsStyle(
-                      color: Colors.blueGrey,
-                      child: const Icon(
-                        Icons.zoom_out_map,
-                        color: Colors.white,
-                      )),
-                ),
+      body: Stack(children: [
+        ImageStickers(
+          backgroundImage: const AssetImage("assets/stickers/white_page.png"),
+          stickerList: stickers,
+          stickerControlsStyle: ImageStickersControlsStyle(
+              color: Colors.blueGrey,
+              child: const Icon(
+                Icons.zoom_out_map,
+                color: Colors.white,
               )),
-          Expanded(flex: 1, child: Container()),
-          // ----------아이콘 크기 조절 박스 -----------------
-          for (var item in _items) item
-        ],
-      ),
-      //body: Stack(children: [for (var item in ItemController.items) item]),
-
-      // ---------------------------------------------------------
-
+        ),
+        for (var item in ItemController.items) item,
+      ]),
       floatingActionButton: SpeedDial(
         icon: Icons.add,
         activeIcon: Icons.close,
@@ -183,15 +135,6 @@ class MyEditPageState extends State<MyEditPage> {
             onTap: () {
               /////------------------스티커 추가기능
               show_sticker_menu();
-            },
-          ),
-          SpeedDialChild(
-              child: Icon(Icons.add_photo_alternate), label: 'gallery'),
-          SpeedDialChild(
-            child: Icon(Icons.delete),
-            label: 'delete',
-            onTap: () {
-              clear();
             },
           ),
           SpeedDialChild(
