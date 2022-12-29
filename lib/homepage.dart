@@ -111,7 +111,7 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('TempDiarys')
+            .collection('Diarys')
             .orderBy('index')
             .snapshots(),
         builder: (BuildContext context, snapshot) {
@@ -133,7 +133,6 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                   (element) => element['userId'] == userInfo.currentUser!.uid)
               .where((element) => element['bookmarked'])
               .toList();
-          print(_currentPageIndex.value);
           return bookmarkedDiaryList.isEmpty
               ? Container(
                   alignment: Alignment.topCenter,
@@ -173,6 +172,8 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                                               'assets/images/coverImages/default.png'))),
                                 ),
                                 onTap: () {
+                                  Store.currentDiaryId = bookmarkedDiaryList
+                                      .elementAt(index)['id'];
                                   passwordCheck(
                                       context,
                                       bookmarkedDiaryList.elementAt(index),
@@ -188,7 +189,9 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                     const SizedBox(height: 10.0),
                     ValueListenableBuilder(
                         valueListenable: _currentPageIndex,
-                        builder: (context, value, child) => Row(
+                        builder: (context, value, child) {
+                          try {
+                            return Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -234,7 +237,11 @@ class _HomeDiaryPageViewState extends State<HomeDiaryPageView> {
                                         .elementAt(_currentPageIndex.value),
                                     30)
                               ],
-                            )),
+                            );
+                          } catch (e) {
+                            return SizedBox();
+                          }
+                        }),
                   ],
                 );
         });
@@ -478,7 +485,7 @@ Widget DeleteDiaryWarningDialog(context, Map<String, dynamic> data) {
       actions: [
         TextButton(
             onPressed: () {
-              //데이터베이스에서 다이어리 삭제하기
+              db.collection('Diarys').doc(data['id']).delete();
               Navigator.pop(context);
             },
             child: const Text('그러세요')),
