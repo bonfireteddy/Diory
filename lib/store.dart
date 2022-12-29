@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:diory_project/edit_page.dart';
+import 'package:diory_project/write_text.dart';
 
 var db = FirebaseFirestore.instance;
 
@@ -37,11 +39,21 @@ class Store {
     db.collection("Diarys").doc(diaryId).set(data);
   }
 
-  static void getPost() {
+  static Future getPost() async {
     String diaryId = "GrZSSShpj3vLvLstKT3R";
-    var data = currentDiaryInfo;
-    db.collection("Diarys").doc(diaryId).get().then((d) {
-      print(d["pages"][0]["components"]);
-    });
+    var d = await db.collection("Diarys").doc(diaryId).get();
+    currentDiaryInfo["pages"] = d["pages"];
+    Test(d);
+  }
+
+  static void Test(DocumentSnapshot<Map<String, dynamic>> data) {
+    List<WriteText> pageItems = [];
+    int i = 0;
+    for (var page in data["pages"][0]["components"]) {
+      pageItems.add(
+          WriteText(id: i++, text: page["text"], dx: page["x"], dy: page["y"]));
+      print(page);
+    }
+    ItemController.items = pageItems;
   }
 }
