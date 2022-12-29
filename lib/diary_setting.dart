@@ -22,14 +22,14 @@ class DiaryCreateNew extends StatelessWidget {
                 )),
         actions: [],
       ),
-      body: DiarySetting(index: null),
+      body: DiarySetting(data: null),
     );
   }
 }
 
 class EditDiarySetting extends StatelessWidget {
-  final int index;
-  const EditDiarySetting({super.key, required this.index});
+  Map<String, dynamic> data;
+  EditDiarySetting({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -55,23 +55,22 @@ class EditDiarySetting extends StatelessWidget {
           const SizedBox(width: 10)
         ],
       ),
-      body: DiarySetting(index: index),
+      body: DiarySetting(data: data),
     );
   }
 }
 
 class DiarySetting extends StatefulWidget {
-  int? index;
-  DiarySetting({super.key, required this.index});
+  Map<String, dynamic>? data;
+  DiarySetting({super.key, required this.data});
 
   @override
   State<DiarySetting> createState() => _DiarySettingState();
 }
 
 class _DiarySettingState extends State<DiarySetting> {
-  String titleText = '';
+  Map<String, dynamic> newData = {};
   bool lock = false;
-  String passwordText = '';
   XFile? image;
   final ImagePicker picker = ImagePicker();
   Future getImage(ImageSource media) async {
@@ -83,11 +82,8 @@ class _DiarySettingState extends State<DiarySetting> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.index != null) {
-      titleText = diaryList.elementAt(widget.index!)['title'];
-      lock = diaryList.elementAt(widget.index!)['password'] != null;
-      passwordText = diaryList.elementAt(widget.index!)['password'] ?? '';
-      //image = 기존 표지 이미지 불러오기...;
+    if (widget.data != null) {
+      newData = widget.data!;
     }
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -99,13 +95,13 @@ class _DiarySettingState extends State<DiarySetting> {
             Expanded(
                 flex: 1,
                 child: TextField(
-                  controller: TextEditingController(text: titleText),
+                  controller: TextEditingController(text: newData['title']),
                   maxLength: 18,
                   maxLines: 1,
                   style: const TextStyle(fontSize: 18),
-                  autofocus: widget.index == null,
+                  autofocus: widget.data == null,
                   onChanged: (value) {
-                    titleText = value;
+                    newData['title'] = value;
                   },
                 )),
             const Expanded(flex: 1, child: SizedBox()),
@@ -136,14 +132,14 @@ class _DiarySettingState extends State<DiarySetting> {
             Expanded(
                 flex: 1,
                 child: TextField(
-                  controller: TextEditingController(text: passwordText),
+                  controller: TextEditingController(text: newData['password']),
                   enabled: lock,
                   maxLength: 18,
                   maxLines: 1,
                   style: TextStyle(
                       fontSize: 18, color: (lock ? Colors.black : Colors.grey)),
                   onChanged: (value) {
-                    passwordText = value;
+                    newData['password'] = value;
                   },
                 )),
             const Expanded(flex: 1, child: SizedBox()),
@@ -180,14 +176,14 @@ class _DiarySettingState extends State<DiarySetting> {
             ),
           ),
           const SizedBox(height: 20),
-          if (widget.index == null)
+          if (widget.data == null)
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: titleText != '' && image != null
+                    backgroundColor: newData['title'] != '' && image != null
                         ? Colors.amber
                         : Colors.grey),
                 onPressed: () {
-                  if (titleText != '' && image != null) {
+                  if (newData['title'] != '' && image != null) {
                     Navigator.pop(context);
                     showDialog(
                       context: context,

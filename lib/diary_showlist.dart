@@ -180,15 +180,68 @@ class ListGridView extends StatefulWidget {
 class _ListGridViewState extends State<ListGridView> {
   @override
   Widget build(BuildContext context) {
-    FirebaseFirestore.instance.collection('Diarys')
-      ..orderBy('index').get().then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-          diaryList.add(doc.data());
-        });
-      });
-    print('got from firebase');
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('TempDiarys')
+            .orderBy('index')
+            .snapshots(),
+        builder: (BuildContext context, snapshot) {
+          if (snapshot.hasError) {
+            return Text('Something went wrong');
+          }
 
-    return Container(
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            //return Text("...");
+          }
+          return GridView(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 3 / 4,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10),
+            children: [
+                  DragTarget(
+                    builder: (context, candidateData, rejectedData) =>
+                        Container(
+                      child: DiaryGridItem(data: null),
+                    ),
+                  )
+                ] +
+                (snapshot.data != null
+                    ? (snapshot.data!.docs.map((DocumentSnapshot document) {
+                        Map<String, dynamic> data =
+                            document.data()! as Map<String, dynamic>;
+                        data['id'] = document.id;
+                        return DragTarget(
+                          builder: (context, candidateData, rejectedData) =>
+                              Container(
+                            child: DiaryGridItem(data: data),
+                          ),
+                          onWillAccept: (objectData) =>
+                              int.parse(objectData.toString()) != -1,
+                          onAccept: (objectData) {
+                            int fromIndex =
+                                int.tryParse(objectData.toString()) ?? -1;
+                            int toIndex = data['index'];
+                            if (toIndex == -1 || toIndex == fromIndex) return;
+                            int largerIndex =
+                                toIndex > fromIndex ? toIndex : fromIndex;
+                            int smallerIndex =
+                                toIndex < fromIndex ? toIndex : fromIndex;
+                            print("from $fromIndex to $toIndex");
+                            setState(() {
+                              diaryList.insert(smallerIndex,
+                                  diaryList.removeAt(largerIndex));
+                              diaryList.insert(largerIndex,
+                                  diaryList.removeAt(smallerIndex + 1));
+                            });
+                          },
+                        );
+                      }).toList())
+                    : []),
+          );
+        });
+    /*return Container(
         child: GridView.builder(
             itemCount: diaryList.length + 1,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -215,13 +268,13 @@ class _ListGridViewState extends State<ListGridView> {
                           largerIndex, diaryList.removeAt(smallerIndex + 1));
                     });
                   },
-                )));
+                )));*/
   }
 }
 
 class DiaryGridItem extends StatefulWidget {
-  final int listIndex;
-  DiaryGridItem({super.key, required this.listIndex});
+  Map<String, dynamic>? data;
+  DiaryGridItem({super.key, required this.data});
   @override
   State<DiaryGridItem> createState() => _DiaryGridItemState();
 }
@@ -229,54 +282,52 @@ class DiaryGridItem extends StatefulWidget {
 class _DiaryGridItemState extends State<DiaryGridItem> {
   @override
   Widget build(BuildContext context) {
+    int listIndex = widget.data != null ? widget.data!['index'] : -1;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        widget.listIndex == -1
+        widget.data == null
             ? Material(
                 child: InkWell(
                 child: addDiaryButton(context),
               ))
             : Draggable(
-                data: widget.listIndex,
-                maxSimultaneousDrags: widget.listIndex == -1 ? 0 : 1,
+                data: listIndex,
+                maxSimultaneousDrags: listIndex == -1 ? 0 : 1,
                 child: Material(
                     child: InkWell(
-                  child: diaryCover(context, widget.listIndex),
+                  child: diaryCover(context, widget.data),
                   onLongPress: () {
                     setState(() {
-                      diaryList.elementAt(widget.listIndex)['bookmarked'] =
-                          !diaryList.elementAt(widget.listIndex)['bookmarked'];
+                      widget.data!['bookmarked'] = !widget.data!['bookmarked'];
                     });
                   },
                   onTap: () {
-                    passwordCheck(context, widget.listIndex, diaryList,
-                        DiaryReadingView(diaryIndex: widget.listIndex));
+                    passwordCheck(context, widget.data, DiaryReadingView());
                   },
                 )),
                 feedback: Material(
                     child: InkWell(
-                  child: diaryCover(context, widget.listIndex),
+                  child: diaryCover(context, widget.data),
                 )),
                 childWhenDragging: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.21,
                   height: MediaQuery.of(context).size.width * 0.28,
                 ),
               ),
-        widget.listIndex != -1
+        widget.data != null
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
                       child: Text(
-                    diaryList.elementAt(widget.listIndex)['title'] ??
-                        'tempTitle',
+                    widget.data!['title'] ?? 'tempTitle',
                     softWrap: false,
                     overflow: TextOverflow.clip,
                   )),
-                  diaryMenuButton(context, 20, widget.listIndex)
+                  diaryMenuButton(context, widget.data, 20)
                 ],
               )
             : const SizedBox(),
@@ -307,9 +358,9 @@ Widget addDiaryButton(context) {
   ));
 }
 
-Widget diaryCover(context, int index) {
-  final bool locked = diaryList.elementAt(index)['password'] != null;
-  final bool bookmarked = diaryList.elementAt(index)['bookmarked'] ?? false;
+Widget diaryCover(context, data) {
+  final bool locked = data['password'] != '';
+  final bool bookmarked = data['bookmarked'] ?? false;
   return Container(
       width: MediaQuery.of(context).size.width * 0.21,
       height: MediaQuery.of(context).size.width * 0.28,
@@ -323,8 +374,7 @@ Widget diaryCover(context, int index) {
                 spreadRadius: 0,
                 offset: const Offset(0, 3))
           ],
-          image: DecorationImage(
-              image: NetworkImage('${diaryList.elementAt(index)['image']}')
+          image: DecorationImage(image: NetworkImage('${data['cover']}')
               //image: AssetImage('assets/images/coverImages/default.png')
               )),
       child: Row(

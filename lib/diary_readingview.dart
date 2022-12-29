@@ -4,18 +4,16 @@ import 'package:diory_project/selectTemplate.dart';
 import 'package:flutter/material.dart';
 
 class DiaryReadingView extends StatelessWidget {
-  int diaryIndex;
-  DiaryReadingView({super.key, required this.diaryIndex});
+  const DiaryReadingView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return DiaryPageView(diaryIndex: diaryIndex);
+    return DiaryPageView();
   }
 }
 
 class DiaryPageView extends StatefulWidget {
-  int diaryIndex;
-  DiaryPageView({super.key, required this.diaryIndex});
+  const DiaryPageView({super.key});
   @override
   State<DiaryPageView> createState() => _DiaryPageViewState();
 }
@@ -25,7 +23,7 @@ class _DiaryPageViewState extends State<DiaryPageView> {
   List _pageList = [];
   @override
   Widget build(BuildContext context) {
-    _pageList = diaryList.elementAt(widget.diaryIndex)['pages'] ?? [];
+    _pageList = /*diaryList.elementAt(widget.diaryIndex)['pages'] ??*/ [];
     _currentPageIndex = _currentPageIndex ?? _pageList.length - 1;
     PageController _pageController =
         PageController(initialPage: _currentPageIndex!);
@@ -33,38 +31,49 @@ class _DiaryPageViewState extends State<DiaryPageView> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Row(children: [
-            Text('${diaryList.elementAt(widget.diaryIndex)['title']}\t\t'),
-            SizedBox(
-                width: 30,
-                height: 30,
-                child: TextField(
-                  controller:
-                      TextEditingController(text: '${_currentPageIndex}'),
-                  keyboardType: TextInputType.number,
-                  textInputAction: TextInputAction.go,
-                  onSubmitted: (value) {
-                    int toPageIndex = -1;
-                    setState(() {
-                      try {
-                        toPageIndex = int.parse(value);
-                      } catch (FormatException) {
-                        return;
-                      }
-                      if (toPageIndex < 0 ||
-                          toPageIndex > _pageList.length - 1) {
-                      } else {
-                        setState(() {
-                          _currentPageIndex = int.parse(value);
-                          _pageController.animateToPage(_currentPageIndex!,
-                              duration: const Duration(microseconds: 500),
-                              curve: Curves.easeIn);
-                        });
-                      }
-                    });
-                  },
+            Expanded(
+                child: Text(
+              'store id로 제목 가져와야함\t\t',
+              overflow: TextOverflow.fade,
+            )),
+            Visibility(
+                visible: _currentPageIndex != -1,
+                child: Row(
+                  children: [
+                    SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: TextField(
+                          controller: TextEditingController(
+                              text: '${_currentPageIndex}'),
+                          keyboardType: TextInputType.number,
+                          textInputAction: TextInputAction.go,
+                          onSubmitted: (value) {
+                            int toPageIndex = -1;
+                            setState(() {
+                              try {
+                                toPageIndex = int.parse(value);
+                              } catch (FormatException) {
+                                return;
+                              }
+                              if (toPageIndex < 0 ||
+                                  toPageIndex > _pageList.length - 1) {
+                              } else {
+                                setState(() {
+                                  _currentPageIndex = int.parse(value);
+                                  _pageController.animateToPage(
+                                      _currentPageIndex!,
+                                      duration:
+                                          const Duration(microseconds: 500),
+                                      curve: Curves.easeIn);
+                                });
+                              }
+                            });
+                          },
+                        )),
+                    const Text('page\t'),
+                  ],
                 )),
-            const Text('page\t'),
-            const Expanded(child: SizedBox()),
             Visibility(
                 visible: _currentPageIndex != -1,
                 child: IconButton(
@@ -75,7 +84,7 @@ class _DiaryPageViewState extends State<DiaryPageView> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => MyEditPage(
-                                  diaryIndex: widget.diaryIndex,
+                                  diaryIndex: /*widget.diaryIndex*/ 0,
                                   pageIndex: _currentPageIndex!)));
                     },
                     icon: Icon(Icons.edit))),
@@ -88,7 +97,8 @@ class _DiaryPageViewState extends State<DiaryPageView> {
                       MaterialPageRoute(
                           builder: (context) => SelectTemplatePage()));
                 },
-                icon: Icon(Icons.add)),
+                icon: const Icon(Icons.add)),
+            const SizedBox(width: 10)
           ],
         ),
         body: SingleChildScrollView(
