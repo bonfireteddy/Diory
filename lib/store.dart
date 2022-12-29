@@ -10,7 +10,9 @@ class Store {
   static var currentDiaryInfo = {
     "id": currentDiaryId,
     "userid": userId,
-    "pages": []
+    "pages": [],
+    "password": null,
+    "coverid": 0
   };
 
   static Map<int, dynamic> temp = {};
@@ -32,13 +34,12 @@ class Store {
   static void createPost() {
     String diaryId = "GrZSSShpj3vLvLstKT3R";
     var data = currentDiaryInfo;
-    db.collection("Diarys").doc(diaryId).update(data);
+    db.collection("Diarys").doc(diaryId).set(data);
   }
 
   static void getPost() {
     String diaryId = "GrZSSShpj3vLvLstKT3R";
     var data = currentDiaryInfo;
-    // db.collection("Diarys").where(diaryId).get().then((value) => print(value));
     db.collection("Diarys").doc(diaryId).get().then((d) {
       print(d["pages"][0]["components"]);
     });
