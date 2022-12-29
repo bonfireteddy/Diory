@@ -43,6 +43,7 @@ dependencies:
     image_picker: ^0.8.6
     flutterfire_ui: ^0.4.3+20
     image_stickers: ^0.0.4
+    flutter_secure_storage: ^7.0.1
 
 
 dev_dependencies:

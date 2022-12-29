@@ -1,5 +1,6 @@
 import 'package:diory_project/store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'join.dart';
 import 'homepage.dart';
@@ -16,6 +17,11 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController =
       TextEditingController(); //입력되는 값을 제어
   final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Widget _userIdWidget() {
     return TextFormField(
@@ -79,62 +85,65 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text("Login"),
-        centerTitle: true,
-      ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 20.0),
-              _userIdWidget(),
-              const SizedBox(height: 20.0),
-              _passwordWidget(),
-              const SizedBox(height: 20.0),
-              GestureDetector(
-                child: const Text(
-                  'register',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.grey,
+    return StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if(!snapshot.hasData) {
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: AppBar(
+                title: const Text("Login"),
+                centerTitle: true,
+              ),
+              body: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20.0),
+                      _userIdWidget(),
+                      const SizedBox(height: 20.0),
+                      _passwordWidget(),
+                      const SizedBox(height: 20.0),
+                      GestureDetector(
+                        child: const Text(
+                          'register',
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const JoinPage()),
+                          );
+                        },
+                      ),
+                      Container(
+                        height: 70,
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              primary: Colors.yellow[600],
+                            ),
+                            onPressed: () => _login(),
+                            child: const Text("Login")),
+                      ),
+                    ],
                   ),
                 ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const JoinPage()),
-                  );
-                },
               ),
-              Container(
-                height: 70,
-                padding: const EdgeInsets.only(top: 20.0),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      primary: Colors.yellow[600],
-                    ),
-                    onPressed: () => _login(),
-                    child: const Text("Login")),
-              ),
-            ],
-          ),
-        ),
-      ),
+            );
+          }
+          return const MyHomePage();
+        }
     );
-  }
 
-  @override
-  void initState() {
-    //해당 클래스가 호출되었을떄
-    super.initState();
   }
 
   @override
@@ -157,10 +166,12 @@ class _LoginPageState extends State<LoginPage> {
           password: _passwordController.text,
         );
         Store.userId = r.user!.uid;
-        Navigator.push(
+
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MyHomePage()),
         );
+
       } on FirebaseAuthException catch (e) {
         //logger.e(e);
         //String message = '';

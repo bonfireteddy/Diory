@@ -295,6 +295,13 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
   String? alias = userInfo.currentUser!.email;
   final String accountImageUrl =
       'assets/images/account_icon_image.png'; //프로필 사진 주소
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -314,7 +321,7 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
                       },
                     )),
             Text(
-              '$nickname님', // 닉네임이 아니라 이메일로 나옴->수정필요
+              '$nickname님',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
             ),
             const Expanded(child: SizedBox()),
@@ -371,6 +378,7 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
               style: TextButton.styleFrom(primary: Colors.grey),
               child: Text('Logout'),
               onPressed: () {
+                //storage.deleteAll();
                 signOut();
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/', (route) => false);
