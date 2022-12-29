@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 
 var db = FirebaseFirestore.instance;
 
@@ -41,6 +42,20 @@ class Store {
     // db.collection("Diarys").where(diaryId).get().then((value) => print(value));
     db.collection("Diarys").doc(diaryId).get().then((d) {
       print(d["pages"][0]["components"]);
+    });
+  }
+
+  static void getDiaryPages() {
+    String diaryId = "GrZSSShpj3vLvLstKT3R";
+    var pages = [];
+    db.collection("Diarys").doc(diaryId).get().then((d) {
+      for (var page in d["pages"]) {
+        for (var component in page["components"]) {
+          pages.add(component);
+        }
+      }
+      currentDiaryInfo["pages"] = pages;
+      print(currentDiaryInfo["pages"]);
     });
   }
 }

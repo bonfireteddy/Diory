@@ -82,7 +82,8 @@ class MyEditPageState extends State<MyEditPage> {
               onPressed: () => ItemController.setPage(0),
               icon: const Icon(Icons.save)),
           IconButton(
-              onPressed: () => Store.getPost(), icon: const Icon(Icons.refresh))
+              onPressed: () => Store.getDiaryPages(),
+              icon: const Icon(Icons.refresh))
         ],
       ),
       endDrawer: Drawer(
