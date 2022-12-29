@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diory_project/diary_setting.dart';
 import 'package:diory_project/diary_readingview.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'diary_showlist.dart';
 import 'account_setprofile.dart';
@@ -27,7 +28,19 @@ class MyHomePage extends StatelessWidget {
                     shape: const CircleBorder(),
                     child: AccountImageIcon(),
                     onPressed: () {
-                      Scaffold.of(context).openEndDrawer();
+                      // 현재 사용자 nickname 가져오기
+                      FirebaseFirestore.instance
+                          .collection('Users')
+                          .snapshots()
+                          .listen((event) {
+                            for(int i=0; i<event.size; i++) {
+                              if(event.docs[i]['email'] == userInfo.currentUser!.email) {
+                                nickname = event.docs[i]['username'];
+                                break;
+                              }
+                            }
+                            Scaffold.of(context).openEndDrawer();
+                      });
                     },
                   )),
         ],
@@ -252,7 +265,16 @@ class DrawerMenuBar extends StatefulWidget {
 }
 
 class _DrawerMenuBarState extends State<DrawerMenuBar> {
-  final String alias = '오리너구리'; //사용자 별명
+  Future signOut() async {
+    try {
+      return await FirebaseAuth.instance.signOut();
+    } catch(e) {
+      print(e);
+    }
+  }
+
+  //final String alias = '오리너구리'; //사용자 별명
+  String? alias = userInfo.currentUser!.email;
   final String accountImageUrl =
       'assets/images/account_icon_image.png'; //프로필 사진 주소
   @override
@@ -274,7 +296,7 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
                       },
                     )),
             Text(
-              '\t$alias님',
+              '$nickname님',  // 닉네임이 아니라 이메일로 나옴->수정필요
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
             ),
             const Expanded(child: SizedBox()),
@@ -322,47 +344,20 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
           title: Text('나의 템플릿 관리', style: TextStyle(fontSize: 16)),
           onTap: null,
         ),
-        const Divider(
-            height: 20,
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 30,
-            color: Color(0xffFCD2D2)),
-        const ListTile(
-          leading: Icon(
-            Icons.logout,
-            color: Colors.black,
+        Container(  // 로그아웃 기능
+          width: 60,
+          height: 100,
+          alignment: Alignment.bottomCenter,
+          child: TextButton(
+              style: TextButton.styleFrom(primary: Colors.grey),
+              child: Text('Logout'),
+              onPressed: () {
+                signOut();
+                Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+              }
           ),
-          title: Text('로그아웃', style: TextStyle(fontSize: 16)),
-          onTap: null,
         ),
-        const Divider(
-            height: 20,
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 30,
-            color: Color(0xffFCD2D2)),
-        const Divider(
-            height: 20,
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 30,
-            color: Color(0xffFCD2D2)),
-        const ListTile(
-          leading: Icon(
-            Icons.storefront,
-            color: Colors.black,
-          ),
-          title: Text('템플릿 스토어', style: TextStyle(fontSize: 16)),
-          onTap: null,
-        ),
-        const Divider(
-            height: 20,
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 30,
-            color: Color(0xffFCD2D2)),
-      ]),
+    ]),
     );
   }
 }
