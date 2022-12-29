@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
 final FirebaseAuth userInfo = FirebaseAuth.instance;
@@ -37,9 +38,15 @@ class _SettingProfile extends State<SettingProfile> {
   final ImagePicker picker = ImagePicker();
   Future getImage(ImageSource media) async {
     var img = await picker.pickImage(source: media);
+    if (img != null) {
+      //ImageCropper().cropImage
+    }
     setState(() {
       image = img;
     });
+
+    final ref = FirebaseStorage.instance.ref().child('userProfile').child(userInfo.currentUser!.uid+'jpg');
+    //await ref.putFile(image);
   }
 
   @override

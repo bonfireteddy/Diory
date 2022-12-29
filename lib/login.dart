@@ -1,6 +1,8 @@
 import 'package:diory_project/store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'join.dart';
 import 'homepage.dart';
 
@@ -16,6 +18,45 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController =
       TextEditingController(); //입력되는 값을 제어
   final TextEditingController _passwordController = TextEditingController();
+  /*
+  String? userData = "";
+
+  static final storage = FlutterSecureStorage();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });
+  }
+
+  _asyncMethod() async {
+    userData = await storage.read(key: "login");
+    print(userData);
+
+    if(userData != null && userData != "") {
+      Navigator.pushNamed(context,  '/homepage');
+      /*
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MyHomePage(
+                id: userData!.split(" ")[1],
+                pass: userData!.split(" ")[3],
+              )));
+
+       */
+    } else {
+      print('로그인필요');
+    }
+  }
+
+   */
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Widget _userIdWidget() {
     return TextFormField(
@@ -132,12 +173,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
-  void initState() {
-    //해당 클래스가 호출되었을떄
-    super.initState();
-  }
-
-  @override
   void dispose() {
     // 해당 클래스가 사라질떄
     _emailController.dispose();
@@ -157,6 +192,7 @@ class _LoginPageState extends State<LoginPage> {
           password: _passwordController.text,
         );
         Store.userId = r.user!.uid;
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const MyHomePage()),
