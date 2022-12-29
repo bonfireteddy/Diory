@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diory_project/diary_setting.dart';
 import 'package:diory_project/diary_readingview.dart';
@@ -113,57 +115,38 @@ class _ListGridViewState extends State<ListGridView> {
                             child: DiaryGridItem(data: data),
                           ),
                           onWillAccept: (objectData) =>
-                              int.parse(objectData.toString()) != -1,
+                              jsonDecode(objectData.toString())['listIndex'] !=
+                              -1,
                           onAccept: (objectData) {
-                            int fromIndex =
-                                int.tryParse(objectData.toString()) ?? -1;
+                            int fromIndex = jsonDecode(
+                                    objectData.toString())['listIndex'] ??
+                                -1;
+
                             int toIndex = data['index'];
                             if (toIndex == -1 || toIndex == fromIndex) return;
-                            int largerIndex =
-                                toIndex > fromIndex ? toIndex : fromIndex;
-                            int smallerIndex =
-                                toIndex < fromIndex ? toIndex : fromIndex;
-                            print("from $fromIndex to $toIndex");
-                            setState(() {
-                              /*diaryList.insert(smallerIndex,
+                            String fromId =
+                                jsonDecode(objectData.toString())['data']['id'];
+                            String toId = data['id'];
+                            print("from $fromIndex $fromId to $toIndex $toId");
+
+                            FirebaseFirestore.instance
+                                .collection("TempDiarys")
+                                .doc(fromId)
+                                .update({'index': toIndex});
+                            FirebaseFirestore.instance
+                                .collection("TempDiarys")
+                                .doc(toId)
+                                .update({'index': fromIndex});
+                            /*diaryList.insert(smallerIndex,
                                   diaryList.removeAt(largerIndex));
                               diaryList.insert(largerIndex,
                                   diaryList.removeAt(smallerIndex + 1));*/
-                            });
                           },
                         );
                       }).toList())
                     : []),
           );
         });
-    /*return Container(
-        child: GridView.builder(
-            itemCount: diaryList.length + 1,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 3 / 4,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10),
-            itemBuilder: (context, index) => DragTarget(
-                  builder: (context, candidateData, rejectedData) => Container(
-                    child: DiaryGridItem(listIndex: index - 1),
-                  ),
-                  onWillAccept: (data) => int.parse(data.toString()) != -1,
-                  onAccept: (data) {
-                    int fromIndex = int.tryParse(data.toString()) ?? -1;
-                    int toIndex = index - 1;
-                    if (toIndex == -1 || toIndex == fromIndex) return;
-                    int largerIndex = toIndex > fromIndex ? toIndex : fromIndex;
-                    int smallerIndex =
-                        toIndex < fromIndex ? toIndex : fromIndex;
-                    setState(() {
-                      diaryList.insert(
-                          smallerIndex, diaryList.removeAt(largerIndex));
-                      diaryList.insert(
-                          largerIndex, diaryList.removeAt(smallerIndex + 1));
-                    });
-                  },
-                )));*/
   }
 }
 
@@ -188,7 +171,7 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
                 child: addDiaryButton(context),
               ))
             : Draggable(
-                data: listIndex,
+                data: jsonEncode({'listIndex': listIndex, 'data': widget.data}),
                 maxSimultaneousDrags: listIndex == -1 ? 0 : 1,
                 child: Material(
                     child: InkWell(
