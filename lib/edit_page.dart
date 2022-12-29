@@ -27,7 +27,8 @@ class ItemController {
     pages.add(Stack(children: [
       ImageStickers(
         backgroundImage: const AssetImage("assets/stickers/white_page.png"),
-        stickerList: ItemController.stickerItems,
+        stickerList:
+            ItemController.stickerItems.map((e) => e.uiSticker).toList(),
         stickerControlsStyle: ImageStickersControlsStyle(
             color: Colors.blueGrey,
             child: const Icon(
