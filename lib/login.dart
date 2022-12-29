@@ -1,3 +1,4 @@
+import 'package:diory_project/store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'join.dart';
@@ -12,10 +13,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController(); //입력되는 값을 제어
+  final TextEditingController _emailController =
+      TextEditingController(); //입력되는 값을 제어
   final TextEditingController _passwordController = TextEditingController();
 
-  Widget _userIdWidget(){
+  Widget _userIdWidget() {
     return TextFormField(
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
@@ -33,10 +35,10 @@ class _LoginPageState extends State<LoginPage> {
               color: Colors.yellow,
             ),
             borderRadius: BorderRadius.all(Radius.circular(30)),
-          )
-      ),
-      validator: (String? value){
-        if (value!.isEmpty) {// == null or isEmpty
+          )),
+      validator: (String? value) {
+        if (value!.isEmpty) {
+          // == null or isEmpty
           return '이메일을 입력해주세요.';
         }
         return null;
@@ -44,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _passwordWidget(){
+  Widget _passwordWidget() {
     return TextFormField(
       controller: _passwordController,
       obscureText: true,
@@ -65,8 +67,9 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.all(Radius.circular(30)),
         ),
       ),
-      validator: (String? value){
-        if (value!.isEmpty) {// == null or isEmpty
+      validator: (String? value) {
+        if (value!.isEmpty) {
+          // == null or isEmpty
           return '비밀번호를 입력해주세요.';
         }
         return null;
@@ -92,7 +95,6 @@ class _LoginPageState extends State<LoginPage> {
               _userIdWidget(),
               const SizedBox(height: 20.0),
               _passwordWidget(),
-
               const SizedBox(height: 20.0),
               GestureDetector(
                 child: const Text(
@@ -102,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.grey,
                   ),
                 ),
-                onTap: (){
+                onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const JoinPage()),
@@ -120,15 +122,13 @@ class _LoginPageState extends State<LoginPage> {
                       primary: Colors.yellow[600],
                     ),
                     onPressed: () => _login(),
-                    child: const Text("Login")
-                ),
+                    child: const Text("Login")),
               ),
             ],
           ),
         ),
       ),
     );
-    //return HomeScreen();
   }
 
   @override
@@ -136,6 +136,7 @@ class _LoginPageState extends State<LoginPage> {
     //해당 클래스가 호출되었을떄
     super.initState();
   }
+
   @override
   void dispose() {
     // 해당 클래스가 사라질떄
@@ -155,12 +156,11 @@ class _LoginPageState extends State<LoginPage> {
           email: _emailController.text,
           password: _passwordController.text,
         );
-
+        Store.userId = r.user!.uid;
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const MyHomePage()),
         );
-
       } on FirebaseAuthException catch (e) {
         //logger.e(e);
         //String message = '';
@@ -174,7 +174,6 @@ class _LoginPageState extends State<LoginPage> {
           message = '이메일을 확인하세요.';
         }
 
-
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(message),
@@ -182,8 +181,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       }
-
     }
   }
-
 }

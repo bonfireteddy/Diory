@@ -18,6 +18,27 @@ class ItemController {
   static List<WriteText> textItems = <WriteText>[];
   static List<Sticker> stickerItems = <Sticker>[];
 
+  static List<Stack> pages = <Stack>[];
+
+  static void setPages() {
+    int i = 0;
+    for (var page
+        in Store.currentDiaryInfo["pages"]) {} //페이지를 스택으로 모두 저장 (스택만 보여주기)
+    pages.add(Stack(children: [
+      ImageStickers(
+        backgroundImage: const AssetImage("assets/stickers/white_page.png"),
+        stickerList: ItemController.stickerItems,
+        stickerControlsStyle: ImageStickersControlsStyle(
+            color: Colors.blueGrey,
+            child: const Icon(
+              Icons.zoom_out_map,
+              color: Colors.white,
+            )),
+      ),
+      for (var item in ItemController.textItems) item,
+    ]));
+  }
+
   static void update(int id, String text) {
     int index = textItems.indexWhere((item) => item.id == id);
     if (index < 0) return;
@@ -53,7 +74,6 @@ class ItemController {
     pageData["components"] = temp;
     Store.setPage(idx, pageData);
     Store.setDiary();
-    print(Store.currentDiaryInfo);
   }
 }
 
@@ -129,7 +149,12 @@ class MyEditPageState extends State<MyEditPage> {
                   setState(() {});
                 });
               },
-              icon: const Icon(Icons.check))
+              icon: const Icon(Icons.check)),
+          IconButton(
+              onPressed: () {
+                Store.createNewDiary();
+              },
+              icon: const Icon(Icons.create_new_folder))
         ],
       ),
       body: Stack(children: [
