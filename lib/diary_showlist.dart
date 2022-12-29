@@ -198,6 +198,7 @@ class _DiaryGridItemState extends State<DiaryGridItem> {
                   },
                   onTap: () {
                     Store.currentDiaryId = widget.data!['id'];
+                    Store.getDiaryPages();
                     passwordCheck(context, widget.data, DiaryReadingView());
                   },
                 )),

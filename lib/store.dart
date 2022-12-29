@@ -67,11 +67,12 @@ class Store {
     ItemController.stickerItems = stickerItems;
   }
 
-  static void getDiaryPages() {
+  static bool getDiaryPages() {
     db.collection("Diarys").doc(currentDiaryId).get().then((d) {
       currentDiaryInfo["title"] = d["title"];
       currentDiaryInfo["pages"] = d["pages"];
     });
+    return true;
   }
 
   static Future<int> createNewDiary(title, cover, password) async {
