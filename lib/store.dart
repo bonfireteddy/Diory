@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_stickers/image_stickers.dart';
 import 'package:image_stickers/image_stickers_controls_style.dart';
@@ -65,22 +67,30 @@ class Store {
     ItemController.stickerItems = stickerItems;
   }
 
-  static void getDiaryPages() {
+  static bool getDiaryPages() {
     db.collection("Diarys").doc(currentDiaryId).get().then((d) {
       currentDiaryInfo["title"] = d["title"];
       currentDiaryInfo["pages"] = d["pages"];
     });
+    return true;
   }
 
-  static void createNewDiary() {
+  static Future<int> createNewDiary(title, cover, password) async {
+    int newIndex = 0;
+    await db.collection("Diarys").get().then((value) {
+      newIndex = value.docs
+          .map((e) => e.data())
+          .where((element) => element['userId'] == Store.userId)
+          .length;
+      print(newIndex);
+    });
     var emptyDiary = {
-      "title": "",
-      "coverid": "",
+      "title": title,
+      "cover": cover,
       "pages": [],
-      "userid": userId,
-      "id": "",
-      "index": -1,
-      "password": null,
+      "userId": userId,
+      "index": newIndex,
+      "password": password,
       "bookmarked": false
     };
     db.collection("Diarys").add(emptyDiary).then((value) {
@@ -90,5 +100,6 @@ class Store {
         "diarys": FieldValue.arrayUnion([value.id])
       });
     });
+    return newIndex;
   }
 }

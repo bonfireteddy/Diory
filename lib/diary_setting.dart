@@ -1,8 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:diory_project/diary_showlist.dart';
 import 'package:diory_project/selectTemplate.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+
+import 'store.dart';
 
 class DiaryCreateNew extends StatelessWidget {
   const DiaryCreateNew({super.key});
@@ -152,10 +156,8 @@ class _DiarySettingState extends State<DiarySetting> {
                       width: MediaQuery.of(context).size.width * 0.45,
                       height: MediaQuery.of(context).size.width * 0.60,
                       decoration: BoxDecoration(
-                        image: image != null
-                            ? DecorationImage(
-                                image: FileImage(File(image!.path)))
-                            : null,
+                        image: DecorationImage(
+                            image: FileImage(File(image!.path))),
                       ),
                     )
                   : Container(
@@ -182,13 +184,25 @@ class _DiarySettingState extends State<DiarySetting> {
                     backgroundColor: newData['title'] != '' && image != null
                         ? Colors.amber
                         : Colors.grey),
-                onPressed: () {
+                onPressed: () async {
                   if (newData['title'] != '' && image != null) {
+                    var downloadUrl = '';
+                    try {
+                      var snapshot = await FirebaseStorage.instance
+                          .ref()
+                          .child('images/covers/newCover.png')
+                          .putFile(File(image!.path));
+                      downloadUrl = await snapshot.ref.getDownloadURL();
+                      print('imageUrl:$downloadUrl');
+                    } catch (e) {}
+                    Store.createNewDiary(
+                        newData['title'], downloadUrl, newData['password']);
                     Navigator.pop(context);
                     showDialog(
                       context: context,
                       barrierDismissible: false,
-                      builder: (context) => diaryCreateSuccesDialog(context, 1),
+                      builder: (context) =>
+                          diaryCreateSuccesDialog(context, newData, image!),
                     );
                   } else {
                     //print('no title or coverimage!');
@@ -199,7 +213,7 @@ class _DiarySettingState extends State<DiarySetting> {
   }
 }
 
-Widget diaryCreateSuccesDialog(context, id) {
+Widget diaryCreateSuccesDialog(context, data, XFile image) {
   return AlertDialog(
       title: const Text('Create Success!'),
       content: Container(
@@ -208,14 +222,14 @@ Widget diaryCreateSuccesDialog(context, id) {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              /*Column(children: [
-                Image.asset(
-                  diaryList.elementAt(index)['image'],
+              Column(children: [
+                Image.file(
+                  File(image.path),
                   width: MediaQuery.of(context).size.width * 0.45,
                   height: MediaQuery.of(context).size.width * 0.60,
                 ),
-                Text(diaryList.elementAt(index)['title'])
-              ]),*/
+                Text(data['title'])
+              ]),
               const Text('첫 페이지를 작성하시겠습니까?'),
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
