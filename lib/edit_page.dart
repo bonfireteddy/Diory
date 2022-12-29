@@ -7,26 +7,28 @@ import 'store.dart';
 
 class ItemController {
   static int id = 0;
-  static List<WriteText> items = <WriteText>[];
+  static List<WriteText> textItems = <WriteText>[];
+  static List<UISticker> stickerItems = <UISticker>[];
+
   static void reload() {}
   static void add(WriteText item) {
-    items.add(item);
+    textItems.add(item);
   }
 
   static void update(int id, String text) {
-    int index = items.indexWhere((item) => item.id == id);
+    int index = textItems.indexWhere((item) => item.id == id);
     if (index < 0) return;
-    items[index].text = text;
+    textItems[index].text = text;
   }
 
   static void delete(int id) {
-    items.removeWhere((item) => item.id == id);
+    textItems.removeWhere((item) => item.id == id);
   }
 
   static void setPage(int idx) {
     var pageData = {"idx": idx, "components": []};
     var temp = [];
-    for (var item in ItemController.items) {
+    for (var item in ItemController.textItems) {
       temp.add({
         "type": "Text",
         "text": item.text,
@@ -34,6 +36,16 @@ class ItemController {
         "y": item.dy,
       });
     }
+    for (var item in ItemController.stickerItems) {
+      temp.add({
+        "type": "Sticker",
+        "x": item.x,
+        "y": item.y,
+        "angle": item.angle,
+        "size": item.size
+      });
+    }
+
     pageData["components"] = temp;
     Store.setPage(idx, pageData);
     Store.setDiary();
@@ -98,13 +110,24 @@ class MyEditPageState extends State<MyEditPage> {
                 await Store.getPost();
                 setState(() {});
               },
-              icon: const Icon(Icons.refresh))
+              icon: const Icon(Icons.refresh)),
+          IconButton(
+              onPressed: () {
+                bool state = (ItemController.stickerItems.length > 0)
+                    ? ItemController.stickerItems[0].editable
+                    : true;
+                ItemController.stickerItems.forEach((sticker) {
+                  sticker.editable = !state;
+                  setState(() {});
+                });
+              },
+              icon: const Icon(Icons.check))
         ],
       ),
       body: Stack(children: [
         ImageStickers(
           backgroundImage: const AssetImage("assets/stickers/white_page.png"),
-          stickerList: stickers,
+          stickerList: ItemController.stickerItems,
           stickerControlsStyle: ImageStickersControlsStyle(
               color: Colors.blueGrey,
               child: const Icon(
@@ -112,7 +135,7 @@ class MyEditPageState extends State<MyEditPage> {
                 color: Colors.white,
               )),
         ),
-        for (var item in ItemController.items) item,
+        for (var item in ItemController.textItems) item,
       ]),
       floatingActionButton: SpeedDial(
         icon: Icons.add,
@@ -181,7 +204,12 @@ class MyEditPageState extends State<MyEditPage> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[TextField(controller: _textEditingController)],
+              children: <Widget>[
+                TextField(
+                    controller: _textEditingController,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null)
+              ],
             ),
             actions: <Widget>[
               TextButton(
@@ -231,7 +259,8 @@ class MyEditPageState extends State<MyEditPage> {
                             // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
                             onTap: () {
                               setState(() {
-                                stickers.add(createSticker(stickers.length,
+                                ItemController.stickerItems.add(createSticker(
+                                    ItemController.stickerItems.length,
                                     "assets/stickers/ory_1.png"));
                               });
                             },
@@ -245,7 +274,8 @@ class MyEditPageState extends State<MyEditPage> {
                             // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
                             onTap: () {
                               setState(() {
-                                stickers.add(createSticker(stickers.length,
+                                ItemController.stickerItems.add(createSticker(
+                                    ItemController.stickerItems.length,
                                     'assets/stickers/Ribone.png'));
                               });
                             },
@@ -259,7 +289,8 @@ class MyEditPageState extends State<MyEditPage> {
                             // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
                             onTap: () {
                               setState(() {
-                                stickers.add(createSticker(stickers.length,
+                                ItemController.stickerItems.add(createSticker(
+                                    ItemController.stickerItems.length,
                                     'assets/stickers/tabaco.png'));
                               });
                             },
@@ -273,7 +304,8 @@ class MyEditPageState extends State<MyEditPage> {
                             // 아이콘 tap했을 때 나오는 효과 이걸 해줘야 tap할 수가 있음.
                             onTap: () {
                               setState(() {
-                                stickers.add(createSticker(stickers.length,
+                                ItemController.stickerItems.add(createSticker(
+                                    ItemController.stickerItems.length,
                                     'assets/stickers/tears.png'));
                               });
                             },
