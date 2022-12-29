@@ -2,6 +2,7 @@ import 'package:diory_project/stickerCollection.dart';
 import 'package:diory_project/write_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_stickers/image_stickers.dart';
 import 'package:image_stickers/image_stickers_controls_style.dart';
 import 'store.dart';
@@ -177,6 +178,8 @@ class MyEditPageState extends State<MyEditPage> {
         activeIcon: Icons.close,
         overlayColor: Colors.grey,
         overlayOpacity: 0.5,
+        switchLabelPosition: true,
+        closeManually: true,
         //animatedIcon: AnimatedIcons.menu_close, -> 기본아이콘이 햄버거로 정해져있음.
 
         children: [
@@ -197,6 +200,7 @@ class MyEditPageState extends State<MyEditPage> {
           ),
           SpeedDialChild(
             child: Icon(Icons.undo),
+            visible: true,
             label: 'undo',
             onTap: () {
               undo();
@@ -282,7 +286,7 @@ class MyEditPageState extends State<MyEditPage> {
             height: 400,
             child: GridView.builder(
               itemCount: AssetSticker.stickerIdx.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
                 childAspectRatio: 1.0,
               ),
@@ -325,8 +329,12 @@ class MyEditPageState extends State<MyEditPage> {
   }
 
   void undo() {
+    List<UISticker> sticker_Items = ItemController.stickerItems;
     setState(() {
-      if (!_items.isEmpty) _items.removeAt(_items.length - 1);
+      // ()안이 items에 요소가 비어있지 않을때만, 리스트에서 삭제한다.
+      if (sticker_Items.isNotEmpty) {
+        sticker_Items.removeAt(sticker_Items.length - 1);
+      }
     });
   }
 }
