@@ -1,8 +1,9 @@
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_stickers/image_stickers.dart';
+import 'package:image_stickers/image_stickers_controls_style.dart';
 import 'package:diory_project/edit_page.dart';
 import 'package:diory_project/write_text.dart';
+import 'package:flutter/material.dart';
 
 var db = FirebaseFirestore.instance;
 
@@ -43,20 +44,31 @@ class Store {
 
   static Future getPost() async {
     String diaryId = "GrZSSShpj3vLvLstKT3R";
-    var d = await db.collection("Diarys").doc(diaryId).get();
-    currentDiaryInfo["pages"] = d["pages"];
-    Test(d);
+    var data = await db.collection("Diarys").doc(diaryId).get();
+    currentDiaryInfo["pages"] = data["pages"];
+    drawPage(data);
   }
 
-  static void Test(DocumentSnapshot<Map<String, dynamic>> data) {
-    List<WriteText> pageItems = [];
+  static void drawPage(DocumentSnapshot<Map<String, dynamic>> data) {
+    List<WriteText> textItems = [];
+    List<UISticker> stickerItems = [];
     int i = 0;
     for (var page in data["pages"][0]["components"]) {
-      pageItems.add(
-          WriteText(id: i++, text: page["text"], dx: page["x"], dy: page["y"]));
-      print(page);
+      if (page["type"] == "Text") {
+        textItems.add(WriteText(
+            id: i++, text: page["text"], dx: page["x"], dy: page["y"]));
+      } else if (page["type"] == "Sticker") {
+        stickerItems.add(UISticker(
+            imageProvider: AssetImage(page["stickerId"]),
+            x: page["x"],
+            y: page["y"],
+            size: page["size"],
+            angle: page["angle"],
+            editable: false));
+      }
     }
-    ItemController.textItems = pageItems;
+    ItemController.textItems = textItems;
+    ItemController.stickerItems = stickerItems;
   }
 
   static void getDiaryPages() {

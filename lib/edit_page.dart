@@ -38,6 +38,7 @@ class ItemController {
     }
     for (var item in ItemController.stickerItems) {
       temp.add({
+        "stickerId": item.imageProvider.toString().split("\"")[1],
         "type": "Sticker",
         "x": item.x,
         "y": item.y,
