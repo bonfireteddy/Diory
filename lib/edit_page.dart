@@ -194,8 +194,7 @@ class MyEditPageState extends State<MyEditPage> {
         activeIcon: Icons.close,
         overlayColor: Colors.grey,
         overlayOpacity: 0.5,
-        switchLabelPosition: true,
-        closeManually: false,
+        
         children: [
           SpeedDialChild(
             child: Icon(Icons.text_fields),
@@ -310,6 +309,7 @@ class MyEditPageState extends State<MyEditPage> {
                     children: [
                       InkWell(
                         onTap: () {
+                          Navigator.pop(context);
                           setState(() {
                             ItemController.stickerItems.add(createSticker(
                                 ItemController.stickerItems.length,
