@@ -194,8 +194,6 @@ class MyEditPageState extends State<MyEditPage> {
         activeIcon: Icons.close,
         overlayColor: Colors.grey,
         overlayOpacity: 0.5,
-        switchLabelPosition: true,
-        closeManually: true,
         //animatedIcon: AnimatedIcons.menu_close, -> 기본아이콘이 햄버거로 정해져있음.
 
         children: [
@@ -312,6 +310,7 @@ class MyEditPageState extends State<MyEditPage> {
                     children: [
                       InkWell(
                         onTap: () {
+                          Navigator.pop(context);
                           setState(() {
                             ItemController.stickerItems.add(createSticker(
                                 ItemController.stickerItems.length,
