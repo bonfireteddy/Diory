@@ -9,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
 final FirebaseAuth userInfo = FirebaseAuth.instance;
+XFile? image;
 
 class SetProfile extends StatelessWidget {
   const SetProfile({Key? key}) : super(key: key);
@@ -33,20 +34,32 @@ class SettingProfile extends StatefulWidget {
 
 class _SettingProfile extends State<SettingProfile> {
   final _usernameController = TextEditingController();
+  final TextEditingController _nicknameCtrl = TextEditingController();
   String alias = '';
-  XFile? image;
+  //XFile? image;
   final ImagePicker picker = ImagePicker();
   Future getImage(ImageSource media) async {
     var img = await picker.pickImage(source: media);
-    if (img != null) {
-      //ImageCropper().cropImage
-    }
     setState(() {
       image = img;
     });
+    saveProfile();
+  }
 
-    final ref = FirebaseStorage.instance.ref().child('userProfile').child(userInfo.currentUser!.uid+'jpg');
-    //await ref.putFile(image);
+  Future saveProfile() async {
+    if(image != null) {
+      final userImageRef = FirebaseStorage.instance.ref("/images/userProfiles/${userInfo.currentUser!.uid}");
+
+      await userImageRef.putFile(File(image!.path));
+
+      final url = await userImageRef.getDownloadURL();
+
+      FirebaseFirestore.instance.collection('Users').doc(userInfo.currentUser!.uid).update({
+        "profileImg" : url,
+        "username" : _nicknameCtrl.text
+      });
+
+    }
   }
 
   @override
@@ -106,6 +119,7 @@ class _SettingProfile extends State<SettingProfile> {
                       ),
                       contentPadding: const EdgeInsets.only(left: 30.0, right: 30.0),
                       floatingLabelStyle: TextStyle(
+                        fontSize: 18,
                         color: Colors.yellow,
                       ),
                       focusedBorder: OutlineInputBorder(
@@ -139,7 +153,7 @@ class _SettingProfile extends State<SettingProfile> {
                     "username" : _usernameController.text,
                 });
 
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const MyHomePage()),
                   );
