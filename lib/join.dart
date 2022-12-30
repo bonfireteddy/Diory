@@ -2,6 +2,7 @@ import 'package:diory_project/setProfile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 
 class JoinPage extends StatefulWidget {
   const JoinPage({Key? key}) : super(key: key);
@@ -155,8 +156,25 @@ class _JoinPageState extends State<JoinPage> {
           MaterialPageRoute(builder: (context) => const SetProfile()),
         );
 
-      } catch (e) {
+      } on FirebaseAuthException catch (e) {
         print(e);
+
+        String message = e.code;
+
+        if (e.code == 'email-already-in-use') {
+          message = '이미 가입된 이메일입니다.';
+        } else if (e.code == 'weak-password') {
+          message = '비밀번호를 다시 입력하세요';
+        } else if (e.code == 'invalid-email') {
+          message = '이메일을 양식을 확인하세요.';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Colors.deepOrange,
+          ),
+        );
       }
 
     }

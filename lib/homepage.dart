@@ -292,7 +292,7 @@ class _DrawerMenuBarState extends State<DrawerMenuBar> {
   }
 
   //final String alias = '오리너구리'; //사용자 별명
-  String? alias = userInfo.currentUser!.email;
+  //String? alias = userInfo.currentUser!.email;
   final String accountImageUrl =
       'assets/images/account_icon_image.png'; //프로필 사진 주소
 
