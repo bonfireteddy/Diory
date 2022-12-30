@@ -195,9 +195,7 @@ class MyEditPageState extends State<MyEditPage> {
         overlayColor: Colors.grey,
         overlayOpacity: 0.5,
         switchLabelPosition: true,
-        closeManually: true,
-        //animatedIcon: AnimatedIcons.menu_close, -> 기본아이콘이 햄버거로 정해져있음.
-
+        closeManually: false,
         children: [
           SpeedDialChild(
             child: Icon(Icons.text_fields),
